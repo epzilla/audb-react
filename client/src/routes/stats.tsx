@@ -1,10 +1,10 @@
 import { h, Component } from 'react';
 import Rest from '../lib/rest-service';
 import LocalStorageService from '../lib/local-storage-service';
-import StatsTable from '../components/statsTable';
-import Expandable from '../components/expandable';
-import SegmentedControl from '../components/segmentedControl';
-import Toggle from '../components/toggle';
+import StatsTable from '../components/StatsTable';
+import Expandable from '../components/Expandable';
+import SegmentedControl from '../components/SegmentedControl';
+import Toggle from '../components/Toggle';
 import CSSTransitionGroup from 'react-css-transition-group';
 
 export default class Stats extends Component {

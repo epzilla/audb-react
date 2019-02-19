@@ -2,11 +2,11 @@ import { h, Component } from 'react';
 import { route } from 'react-router';
 import Rest from '../lib/rest-service';
 import LocalStorageService from '../lib/local-storage-service';
-import DepthChart from '../components/depthChart';
-import EditablePlayerSlideOut from '../components/editablePlayerSlideOut';
-import InactivePlayersTable from '../components/inactivePlayersTable';
-import Expandable from '../components/expandable';
-import EditableTable from '../components/editableTable';
+import DepthChart from '../components/DepthChart';
+import EditablePlayerSlideOut from '../components/EditablePlayerSlideout';
+import InactivePlayersTable from '../components/InactivePlayersTable';
+import Expandable from '../components/Expandable';
+import EditableTable from '../components/EditableTable';
 import CSSTransitionGroup from 'react-css-transition-group';
 
 export default class Admin extends Component {

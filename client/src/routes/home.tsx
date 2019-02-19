@@ -4,9 +4,9 @@ import { Link } from 'react-router/match';
 import d3 from 'd3';
 import crossfilter from 'crossfilter';
 import { BarChart, PieChart, RowChart } from '../lib/react-dc/react-dc';
-import StatsTable from '../components/statsTable';
-import Expandable from '../components/expandable';
-import Avatar from '../components/avatar';
+import StatsTable from '../components/StatsTable';
+import Expandable from '../components/Expandable';
+import Avatar from '../components/Avatar';
 
 export default class Home extends Component {
   constructor(props) {

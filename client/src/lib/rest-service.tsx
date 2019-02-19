@@ -10,5 +10,5 @@ export default {
 
   upload: (url, data) => qwest.post(`${base}${url}`, data, { dataType: 'formdata', withCredentials: true }).then(res => res.response),
 
-  del: (url, data) => qwest.delete(`${base}${url}`, data, { dataType: 'formdata', withCredentials: true }).then(res => res.response)
+  del: (url, data?: any) => qwest.delete(`${base}${url}`, data, { dataType: 'formdata', withCredentials: true }).then(res => res.response)
 };

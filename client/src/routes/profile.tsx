@@ -2,7 +2,7 @@ import { h, Component } from 'react';
 import Rest from '../lib/rest-service';
 import { route } from 'react-router';
 import { Link } from 'react-router/match';
-import Avatar from '../components/avatar';
+import Avatar from '../components/Avatar';
 import LocalStorageService from '../lib/local-storage-service';
 
 export default class Profile extends Component {

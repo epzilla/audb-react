@@ -1,8 +1,8 @@
 import { h, Component } from 'react';
 import Rest from '../lib/rest-service';
 import LocalStorageService from '../lib/local-storage-service';
-import PlayerSlideOut from '../components/playerSlideOut';
-import DepthChart from '../components/depthChart';
+import PlayerSlideOut from '../components/PlayerSlideOut';
+import DepthChart from '../components/DepthChart';
 import CSSTransitionGroup from 'react-css-transition-group';
 
 export default class Depth extends Component {

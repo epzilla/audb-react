@@ -1,6 +1,4 @@
-import { h, Component } from 'react';
 import Rest from '../lib/rest-service';
-import { route } from 'react-router';
 import LocalStorageService from '../lib/local-storage-service';
 
 const Logout = (props) => {

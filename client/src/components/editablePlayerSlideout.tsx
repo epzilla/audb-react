@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
-import { Toggle } from './toggle';
-import { PlayerSlideOut } from './playerSlideOut';
+import { Toggle } from './Toggle';
+import { PlayerSlideOut } from './PlayerSlideOut';
 
 const years = ['FR', 'RFR', 'SO', 'JR', 'SR'];
 const positions = [

@@ -1,8 +1,8 @@
 import { Component } from 'react';
 import { Router } from 'react-router';
 import Config from '../config';
-import Header from './header';
-import Footer from './footer';
+import Header from './Header';
+import Footer from './Footer';
 import Home from '../routes/home';
 import Stats from '../routes/stats';
 import Yearly from '../routes/yearly';
@@ -13,9 +13,9 @@ import Login from '../routes/login';
 import Logout from '../routes/logout';
 import Signup from '../routes/signup';
 import Profile from '../routes/profile';
-import NotSoSecretCode from './notSoSecretCode';
-import GlobalKeyboardShortcuts from './globalKeyboardShortcuts';
-import KeyboardShortcutHelp from './keyboardShortcutHelp';
+import NotSoSecretCode from './NotSoSecretCode';
+import GlobalKeyboardShortcuts from './GlobalKeyboardShortcuts';
+import KeyboardShortcutHelp from './KeyboardShortcutHelp';
 import Rest from '../lib/rest-service';
 import LocalStorageService from '../lib/local-storage-service';
 
