@@ -1,45 +1,37 @@
-import { Component } from 'react';
+import { FC } from 'react';
+import { LVP } from '../lib/interfaces';
 
-export default class SegmentedControl extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { value: null };
-  }
+interface ISegmentedControlProps {
+  options: LVP[];
+  onChange: (value: any) => void;
+  value: any;
+}
 
-  componentWillReceiveProps({ value }) {
-    this.setState({ value });
-  }
+export const SegmentedControl: FC<ISegmentedControlProps> = ({ options, onChange, value }) => {
 
-  onKeyup = (e) => {
+  const onKeyup = (e) => {
     if (e.target.nodeName === 'BUTTON' && (e.key === 'Enter' || e.key === 'Space')) {
       e.preventDefault();
       e.stopPropagation();
-      this.onClick(e.target.dataset('value'));
+      onClick(e.target.dataset('value'));
     }
   };
 
-  onClick = (value) => {
-    this.setState({ value })
-    this.props.onChange(value);
+  const onClick = (value) => {
+    onChange(value);
   };
 
-  render() {
-    let opts = this.props.options.map(opt => {
-      let classes = 'btn';
-
-      if (opt.value === this.state.value) {
-        classes += ' selected';
+  return (
+    <div className="segmented-control" onKeyUp={onKeyup}>
+      {
+        options.map(opt => (
+          <button
+            className={`btn${opt.value === value ? ' selected' : ''}`}
+            onClick={(e) => onClick(opt.value)}>
+            {opt.label}
+          </button>
+        ))
       }
-
-      return (
-        <button className={classes} onClick={(e) => this.onClick(opt.value)}>{opt.label}</button>
-      );
-    });
-
-    return (
-      <div className="segmented-control" onKeyup={this.onKeyup}>
-        { opts }
-      </div>
-    );
-  }
-}
+    </div>
+  );
+};
