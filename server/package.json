@@ -1,0 +1,43 @@
+{
+  "name": "audb",
+  "version": "1.0.0",
+  "dependencies": {
+    "bcryptjs": "^2.4.0",
+    "body-parser": "^1.18.1",
+    "connect-mongo": "^1.3.2",
+    "cookie-parser": "^1.4.3",
+    "errorhandler": "^1.5.0",
+    "express": "^4.15.4",
+    "express-session": "^1.15.5",
+    "lodash": "^4.17.4",
+    "method-override": "^2.3.9",
+    "mongoose": "^4.11.11",
+    "mongoose-unique-validator": "^1.0.6",
+    "morgan": "^1.8.2",
+    "passport": "^0.4.0",
+    "passport-local": "^1.0.0",
+    "pug": "^0.1.0",
+    "serve-static": "^1.12.4"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.18.13",
+    "connect-livereload": "^0.6.0",
+    "del": "^3.0.0",
+    "gulp": "^3.9.1",
+    "gulp-imagemin": "^3.3.0",
+    "gulp-minify-css": "^1.2.4",
+    "gulp-nodemon": "^2.2.1",
+    "gulp-plumber": "^1.1.0",
+    "gulp-stylus": "^2.6.0",
+    "gulp-uglify": "^3.0.0",
+    "gulp-usemin": "^0.3.28",
+    "run-sequence": "^2.1.0",
+    "stylus": "^0.54.5"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "scripts": {
+    "test": "grunt test"
+  }
+}
