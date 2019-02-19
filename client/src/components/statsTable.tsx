@@ -1,6 +1,17 @@
+import { FC } from 'react';
 import { gameIsInFuture } from '../lib/helpers';
 
-const StatsTable = ({ games, user, toggleUserAttend, currentYear, showRecord, config }) => {
+interface IStatsTableProps {
+  games,
+  user,
+  toggleUserAttend,
+  currentYear,
+  showRecord,
+  config
+}
+
+export const StatsTable: FC<IStatsTableProps> = (props) => {
+  const { games, user, toggleUserAttend, currentYear, showRecord, config } = props;
   let wins = 0;
   let losses = 0;
   let ties = 0;
@@ -62,7 +73,7 @@ const StatsTable = ({ games, user, toggleUserAttend, currentYear, showRecord, co
     }
 
     return (
-      <tr tabindex={i + 11} className={rowClass}>
+      <tr tabIndex={i + 11} className={rowClass}>
         <td>
           <span className="larger">{ `${dateParts[1]}/${dateParts[2]}/${dateParts[0]}` }</span>
           <span className="smaller">{dateParts[0]}</span>
@@ -110,5 +121,3 @@ const StatsTable = ({ games, user, toggleUserAttend, currentYear, showRecord, co
     </div>
   );
 };
-
-export default StatsTable;

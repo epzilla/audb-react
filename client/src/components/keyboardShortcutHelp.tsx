@@ -1,6 +1,12 @@
-import CSSTransitionGroup from 'react-css-transition-group';
+import { FC } from 'react';
+import CSSTransitionGroup from 'react-transition-group';
 
-const KeyboardShortcutHelp = ({ show, dismiss }) => {
+interface IKSHProps {
+  show: () => void;
+  dismiss: () => void;
+}
+
+export const KeyboardShortcutHelp: FC<IKSHProps> = ({ show, dismiss }) => {
   let modal;
   if (show) {
     modal = (
@@ -16,7 +22,7 @@ const KeyboardShortcutHelp = ({ show, dismiss }) => {
               <table>
                 <thead>
                   <tr>
-                    <td colspan="2"><strong>Global</strong></td>
+                    <td colSpan={2}><strong>Global</strong></td>
                   </tr>
                   <tr>
                     <th className="one-third">Key</th>
@@ -61,7 +67,7 @@ const KeyboardShortcutHelp = ({ show, dismiss }) => {
               <table className="table table-condensed table-responsive">
                 <thead>
                   <tr>
-                    <td colspan="2"><strong>Stats Page</strong></td>
+                    <td colSpan={2}><strong>Stats Page</strong></td>
                   </tr>
                   <tr>
                     <th className="one-third">Key</th>
@@ -92,7 +98,7 @@ const KeyboardShortcutHelp = ({ show, dismiss }) => {
               <table className="table table-condensed table-responsive">
                 <thead>
                   <tr>
-                    <td colspan="2"><strong>Yearly Results Page</strong></td>
+                    <td colSpan={2}><strong>Yearly Results Page</strong></td>
                   </tr>
                   <tr>
                     <th className="one-third">Key</th>
@@ -117,7 +123,7 @@ const KeyboardShortcutHelp = ({ show, dismiss }) => {
               <table className="table table-condensed table-responsive">
                 <thead>
                   <tr>
-                    <td colspan="2"><strong>Recruiting Page</strong></td>
+                    <td colSpan={2}><strong>Recruiting Page</strong></td>
                   </tr>
                   <tr>
                     <th className="one-third">Key</th>
@@ -180,11 +186,8 @@ const KeyboardShortcutHelp = ({ show, dismiss }) => {
       trasnsitionLeave={true}
       transitionEnter={true}
       transitionEnterTimeout={200}
-      transitionLeaveTimeout={200}
-    >
-    { modal || null }
+      transitionLeaveTimeout={200}>
+      { modal || null }
     </CSSTransitionGroup>
   );
 };
-
-export default KeyboardShortcutHelp;

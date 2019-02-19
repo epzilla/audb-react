@@ -1,61 +1,62 @@
-import { h, Component } from 'react';
-import Toggle from './toggle';
+import { FC, useState, useEffect } from 'react';
 import Rest from '../lib/rest-service';
 
-export default class InactivePlayersTable extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { players : [] };
-  }
-
-  componentDidMount() {
-    this.getPlayers();
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.registerForRefresh) {
-      nextProps.registerForRefresh(this.getPlayers);
-    }
-  }
-
-  getPlayers = () => {
-    Rest.get('players/inactive').then(players => {
-      this.setState({ players });
-    });
-  };
-
-  reactivate = (player) => {
-    player.active = true;
-    Rest.post(`player/${player._id}`, player).then(pl => {
-      this.props.playerReactivated();
-      this.getPlayers();
-    }).catch(e => {
-      console.error(e);
-    })
-  };
-
-  render() {
-    return (
-      <table className="capped-size-table">
-        <thead>
-          <th>Name</th>
-          <th>Pos</th>
-          <th>Reactivate</th>
-        </thead>
-        <tbody>
-          {
-            this.state.players.map(pl => (
-              <tr>
-                <td>{pl.fname} {pl.lname}</td>
-                <td>{pl.pos}</td>
-                <td>
-                  <button className="btn" onClick={() => this.reactivate(pl)}>+</button>
-                </td>
-              </tr>
-            ))
-          }
-        </tbody>
-      </table>
-    );
-  }
+interface IIPTProps {
+  registerForRefresh: (fn: Function) => void;
+  playerReactivated: () => void;
 }
+
+export const InactivePlayersTable: FC<IIPTProps> = ({ playerReactivated, registerForRefresh }) => {
+
+  const [players, setPlayers] = useState([]);
+  useEffect(() => {
+    if (!players) {
+      getPlayers();
+    }
+  }, [players]);
+
+  useEffect(() => {
+    if (registerForRefresh) {
+      registerForRefresh(getPlayers);
+    }
+  }, []);
+
+  const getPlayers = async () => {
+    setPlayers(await Rest.get('players/inactive'));
+  };
+
+  const reactivate = async (player) => {
+    player.active = true;
+    try {
+      await Rest.post(`player/${player._id}`, player);
+      playerReactivated();
+      getPlayers();
+    }
+    catch (e) {
+      console.error(e);
+    }
+  };
+
+  return (
+    <table className="capped-size-table">
+      <thead>
+        <th>Name</th>
+        <th>Pos</th>
+        <th>Reactivate</th>
+      </thead>
+      <tbody>
+        {
+          players.map(pl => (
+            <tr>
+              <td>{pl.fname} {pl.lname}</td>
+              <td>{pl.pos}</td>
+              <td>
+                <button className="btn" onClick={() => reactivate(pl)}>+</button>
+              </td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  );
+};

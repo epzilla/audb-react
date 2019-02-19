@@ -1,4 +1,5 @@
-const base = 'http://localhost:3000/api/';
+const base = 'http://localhost:8080/api/';
+import qwest from 'qwest';
 
 export default {
   get: url => qwest.get(`${base}${url}`, null, { responseType: 'json', withCredentials: true }).then(res => res.response),
