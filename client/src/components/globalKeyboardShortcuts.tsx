@@ -1,80 +1,80 @@
-import { Component } from 'react';
-import { route, getCurrentUrl } from 'react-router';
+import { FC, useRef, useEffect } from 'react';
+import { createBrowserHistory } from 'history';
+const history = createBrowserHistory();
 
-export default class GlobalKeyboardShortcuts extends Component {
-  constructor(props) {
-    super(props);
-    this.goto = false;
-  }
+interface IGlobalKeyboardShortcutsProps {
+  toggleKeyboardShortcuts: () => void;
+  escape: () => void;
+}
 
-  componentDidMount() {
-    document.removeEventListener('keyup', this.onKeyUp);
-    document.addEventListener('keyup', this.onKeyUp);
-  }
+export const GlobalKeyboardShortcuts: FC<IGlobalKeyboardShortcutsProps> = (props) => {
 
-  componentWillUnmount() {
-    document.removeEventListener('keyup', this.onKeyUp);
-  }
+  const goTo = useRef(false);
 
-  onKeyUp = (e) => {
+  useEffect(() => {
+    document.addEventListener('keyup', onKeyUp);
+    return () => {
+      document.removeEventListener('keyup', onKeyUp);
+    }
+  });
+
+  const onKeyUp = (e) => {
     if (e.target.nodeName !== 'INPUT') {
       switch (e.key) {
         case 'k':
-          this.props.toggleKeyboardShortcuts();
+          props.toggleKeyboardShortcuts();
           break;
         case 'Escape':
-          this.props.escape();
+          props.escape();
           break;
         case 'g':
-          this.goto = true;
+          goTo.current = true;
           break;
         case 'h':
-          if (this.goto) {
-            this.goto = false;
-            route('/');
+          if (goTo.current) {
+            goTo.current = false;
+            history.push('/');
           }
           break;
         case 's':
-          if (this.goto) {
-            this.goto = false;
-            route('/stats');
+          if (goTo.current) {
+            goTo.current = false;
+            history.push('/stats');
           }
           break;
         case 'y':
-          if (this.goto) {
-            this.goto = false;
-            route('/yearly');
+          if (goTo.current) {
+            goTo.current = false;
+            history.push('/yearly');
           }
           break;
         case 'd':
-          if (this.goto) {
-            this.goto = false;
-            route('/depth');
+          if (goTo.current) {
+            goTo.current = false;
+            history.push('/depth');
           }
           break;
         case 'r':
-          if (this.goto) {
-            this.goto = false;
-            route('/recruiting');
+          if (goTo.current) {
+            goTo.current = false;
+            history.push('/recruiting');
           }
           break;
         case 'p':
-          if (this.goto) {
-            this.goto = false;
-            route('/profile');
+          if (goTo.current) {
+            goTo.current = false;
+            history.push('/profile');
           }
         case 'a':
-          if (this.goto) {
-            this.goto = false;
-            route('/admin');
+          if (goTo.current) {
+            goTo.current = false;
+            history.push('/admin');
           }
         default:
-          this.goto = false;
+          goTo.current = false;
       }
     }
   };
 
-  render() {
-    return null;
-  }
-}
+  return null;
+};
