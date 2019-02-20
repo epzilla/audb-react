@@ -1,100 +1,91 @@
-import { h, Component } from 'react';
+import { FC, useState, useRef} from 'react';
 import Rest from '../lib/rest-service';
 import LocalStorageService from '../lib/local-storage-service';
-import PlayerSlideOut from '../components/PlayerSlideOut';
-import DepthChart from '../components/DepthChart';
-import CSSTransitionGroup from 'react-css-transition-group';
+import { PlayerSlideOut } from '../components/PlayerSlideOut';
+import { DepthChart } from '../components/DepthChart';
+import { CSSTransitionGroup } from 'react-transition-group';
 
-export default class Depth extends Component {
-  constructor(props) {
-    super(props);
-    this.year = new Date().getFullYear();
-    this.state = {
-      players: [],
-      playerSlideOut: null
-    };
-  }
+interface IDepthProps {
+  config: any;
+}
 
-  componentDidMount() {
-    this.getPlayers();
-  }
+export const Depth: FC<IDepthProps> = (props) => {
 
-  getPlayers = () => {
-    let players = LocalStorageService.get('players');
-    if (players) {
-      this.setState({ players });
+  const year = useRef(new Date().getFullYear());
+  const [players, setPlayers] = useState([]);
+  const [showPlayerSlideOut, setShowPlayerSlideOut] = useState(null);
+
+  const getPlayers = () => {
+    let pls = LocalStorageService.get('players');
+    if (pls) {
+      setPlayers(pls);
     }
 
     Rest.get('playersByPos').then(pls => {
       if (JSON.stringify(pls) !== JSON.stringify(players)) {
-        this.setState({ players: pls });
+        setPlayers(pls);
         LocalStorageService.set('players', pls);
       }
     });
   };
 
-  showPlayerSlideOut = (player) => {
-    this.setState({ playerSlideOut: player });
+  let playerSlideOut;
+  let playerEls = {
+    QB: [],
+    RB: [],
+    FB: [],
+    TE: [],
+    LT: [],
+    LG: [],
+    C: [],
+    RG: [],
+    RT: [],
+    Slot: [],
+    WR2: [],
+    WR9: [],
+    DT: [],
+    NG: [],
+    SDE: [],
+    WDE: [],
+    WLB: [],
+    SLB: [],
+    MLB: [],
+    SS: [],
+    FS: [],
+    LCB: [],
+    RCB: [],
+    P: [],
+    K: []
   };
 
-  dismissPlayerSlideOut = () => {
-    this.setState({ playerSlideOut: null });
-  };
-
-  render() {
-    let players = this.state.players;
-    let playerSlideOut;
-    let playerEls = {
-      QB: [],
-      RB: [],
-      FB: [],
-      TE: [],
-      LT: [],
-      LG: [],
-      C: [],
-      RG: [],
-      RT: [],
-      Slot: [],
-      WR2: [],
-      WR9: [],
-      DT: [],
-      NG: [],
-      SDE: [],
-      WDE: [],
-      WLB: [],
-      SLB: [],
-      MLB: [],
-      SS: [],
-      FS: [],
-      LCB: [],
-      RCB: [],
-      P: [],
-      K: []
-    };
-
-    if (players && this.state.playerSlideOut) {
-      playerSlideOut = <PlayerSlideOut player={this.state.playerSlideOut} dismiss={this.dismissPlayerSlideOut} />;
-    }
-
-    return (
-      <div className="main depth">
-        <h1>{ this.year } { this.props.config.team } Football Depth Chart</h1>
-
-        <CSSTransitionGroup
-          transitionName="slide-out"
-          transitionAppear={true}
-          trasnsitionLeave={true}
-          transitionEnter={true}
-          transitionEnterTimeout={0}
-          transitionLeaveTimeout={0}>
-          {playerSlideOut || []}
-        </CSSTransitionGroup>
-
-        <DepthChart
-          selectedCallback={(player) => this.showPlayerSlideOut(player)}
-          players={this.state.players}
-        />
-      </div>
-    );
+  if (players && playerSlideOut) {
+    playerSlideOut = <PlayerSlideOut player={playerSlideOut} dismiss={() => setShowPlayerSlideOut(null)} />;
   }
-}
+
+  return (
+    <div className="main depth">
+      <h1>{year} {props.config.team} Football Depth Chart</h1>
+
+      <CSSTransitionGroup
+        transitionName="slide-out"
+        transitionAppear={true}
+        trasnsitionLeave={true}
+        transitionEnter={true}
+        transitionEnterTimeout={0}
+        transitionLeaveTimeout={0}>
+        {
+          players && showPlayerSlideOut ?
+          <PlayerSlideOut player={playerSlideOut} dismiss={() => setShowPlayerSlideOut(null)} />
+          :
+          []
+        }
+      </CSSTransitionGroup>
+
+      <DepthChart
+        selectedCallback={(player) => setShowPlayerSlideOut(player)}
+        players={players}
+        editable={false}
+      />
+    </div>
+  );
+};
