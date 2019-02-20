@@ -1,135 +1,137 @@
-import { Component } from 'react';
-import Toggle from './Toggle';
-import Autocomplete from './Autocomplete';
+import { FC, useState, useEffect } from 'react';
+import { Toggle } from './Toggle';
+import { Autocomplete } from './Autocomplete';
 
-export default class EditableTable extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { data: [], headers: [] };
-  }
+interface IEditableTableProps {
+  autoSaveRow: boolean;
+  className?: string;
+  deleteButton: boolean;
+  rowDeleteCallback: (i: number, row: any) => void;
+  rowSaveCallback: Function;
+  data: any[];
+  headers: any[];
+}
 
-  componentWillReceiveProps({ data, headers, autoSaveRow, rowSaveCallback }) {
-    let autoCompleteValues = {};
+export const EditableTable: FC<IEditableTableProps> = (props) => {
+  const { autoSaveRow, className, data, deleteButton, headers, rowDeleteCallback, rowSaveCallback } = props;
+  const [autoCompleteValues, setAutoCompleteValues] = useState({});
+  const [tableData, setTableData] = useState(data);
+  useEffect(() => {
+    let autoCompValues = {};
     headers.forEach(h => {
       if (h.type === 'autocomplete') {
         data.forEach((d, i) => {
-          autoCompleteValues[`${h.name}${i}`] = d[h.name];
+          autoCompValues[`${h.name}${i}`] = d[h.name];
         });
       }
-    })
-    this.setState({ data, headers, autoCompleteValues });
-  }
+    });
+    setAutoCompleteValues(autoCompValues);
+  }, [headers, data])
 
-  changed = (e, i, header) => {
-    let data = this.state.data;
-    data[i][header.name] = e.target.value;
+  const onChange = (e, i, header) => {
+    let editedData = [ ... tableData ];
+    editedData[i][header.name] = e.target.value;
     if (header.type === 'number') {
-      data[i][header.name] = parseInt(data[i][header.name]);
+      editedData[i][header.name] = parseInt(editedData[i][header.name]);
     }
-    this.setState({ data }, () => {
-      if (this.props.autoSaveRow) {
-        this.props.rowSaveCallback(data[i], i, data);
-      }
-    });
+    setTableData(editedData);
+    if (autoSaveRow) {
+      rowSaveCallback(editedData[i], i, editedData);
+    }
   };
 
-  autocompleteChanged = (item, i, header) => {
-    let state = this.state;
+  const autocompleteChanged = (item, i, header) => {
+    let autoCompValues = { ...autoCompleteValues };
+    let editedData = [ ...tableData ];
     let key = `${header.name}${i}`;
-    state.autoCompleteValues[key] = item.val;
-    state.data[i][header.name] = item.val;
-    this.setState(state, () => {
-      if (this.props.autoSaveRow) {
-        this.props.rowSaveCallback(state.data[i], i, state.data);
-      }
-    });
+    autoCompValues[key] = item.val;
+    editedData[i][header.name] = item.val;
+    setAutoCompleteValues(autoCompValues);
+    setTableData(editedData);
+    if (autoSaveRow) {
+      rowSaveCallback(editedData[i], i, editedData);
+    }
   };
 
-  focus = (e) => {
+  const focus = (e) => {
     e.target.select();
   };
 
-  toggled = (field, i) => {
-    let data = this.state.data;
-    data[i][field] = !data[i][field];
-    this.setState({ data }, () => {
-      if (this.props.autoSaveRow) {
-        this.props.rowSaveCallback(data[i], i, data);
-      }
-    });
-  };
-
-  deleteRow = (i) => {
-    let data = this.state.data
-    let deletedRow = data.splice(i, 1)[0];
-    this.setState({ data }, () => {
-      if (this.props.rowDeleteCallback) {
-        this.props.rowDeleteCallback(i, deletedRow);
-      }
-    });
-  };
-
-  render() {
-    let headers = this.state.headers.map(header => {
-      return <th className="title-case">{header.title ? header.title : header.name}</th>;
-    });
-
-    if (this.props.deleteButton) {
-      headers.push(<th></th>);
+  const toggled = (field, i) => {
+    let editedData = [ ...tableData ];
+    editedData[i][field] = !editedData[i][field];
+    setTableData(editedData);
+    if (autoSaveRow) {
+      rowSaveCallback(editedData[i], i, editedData);
     }
+  };
 
-    let rows = this.state.data.map((d, i) => {
-      let cells = this.state.headers.map(header => {
-        if (header.type === 'select') {
-          return (
-            <td className="align-center">
-              <select onChange={(e) => this.changed(e, i, header)}>
-                {
-                  header.options.map(opt => {
-                    return <option value={opt} selected={opt === d[header.name]}>{opt}</option>
-                  })
-                }
-              </select>
-            </td>
-          )
-        }
+  const deleteRow = (i) => {
+    let editedData = [ ...data ];
+    let deletedRow = editedData.splice(i, 1)[0];
+    setTableData(editedData);
+    if (rowDeleteCallback) {
+      rowDeleteCallback(i, deletedRow);
+    }
+  };
 
-        if (header.type === 'boolean') {
-          return <td className="flex-center"><Toggle id={`${header.name}-${i}`} toggled={(e) => this.toggled(e, i)} onOff={d[header.name]} property={header.name} /></td>
-        }
-        else if (header.type === 'autocomplete') {
-          return (
-            <td>
-              <Autocomplete
-                value={d[header.name]}
-                options={header.items}
-                onSelect={(item) => this.autocompleteChanged(item, i, header)}
-                renderItems={header.render}
-              />
-            </td>
-          )
-        }
+  let headerRowCells = headers.map(header => {
+    return <th className="title-case">{header.title ? header.title : header.name}</th>;
+  });
 
-        return <td><input onFocus={this.focus} value={d[header.name]} type={header.type} onChange={(e) => this.changed(e, i, header)} /></td>
-      });
+  if (deleteButton) {
+    headerRowCells.push(<th></th>);
+  }
 
-      if (this.props.deleteButton) {
-        cells.push(<td><button className="delete-btn" onClick={() => this.deleteRow(i)}>&times;</button></td>);
+  let rows = data.map((d, i) => {
+    let cells = headers.map(header => {
+      if (header.type === 'select') {
+        return (
+          <td className="align-center">
+            <select onChange={(e) => onChange(e, i, header)}>
+              {
+                header.options.map(opt => {
+                  return <option value={opt} selected={opt === d[header.name]}>{opt}</option>
+                })
+              }
+            </select>
+          </td>
+        )
       }
-      return <tr>{ cells }</tr>;
+
+      if (header.type === 'boolean') {
+        return <td className="flex-center"><Toggle id={`${header.name}-${i}`} toggled={(e) => toggled(e, i)} onOff={d[header.name]} property={header.name} /></td>
+      }
+      else if (header.type === 'autocomplete') {
+        return (
+          <td>
+            <Autocomplete
+              value={d[header.name]}
+              options={header.items}
+              onSelect={(item) => autocompleteChanged(item, i, header)}
+              renderItems={header.render}
+            />
+          </td>
+        )
+      }
+
+      return <td><input onFocus={focus} value={d[header.name]} type={header.type} onChange={(e) => onChange(e, i, header)} /></td>
     });
 
-    let classNames = this.props.class ? this.props.class : '';
+    if (deleteButton) {
+      cells.push(<td><button className="delete-btn" onClick={() => deleteRow(i)}>&times;</button></td>);
+    }
+    return <tr>{cells}</tr>;
+  });
 
-    return(
-      <table className={`editable-table ${classNames}`}>
-        <thead>
-          { headers }
-        </thead>
-        <tbody>
-          { rows }
-        </tbody>
-      </table>
-    );
-  }
-}
+  return (
+    <table className={`editable-table ${className ? className : ''}`}>
+      <thead>
+        {headers}
+      </thead>
+      <tbody>
+        {rows}
+      </tbody>
+    </table>
+  );
+};

@@ -1,9 +1,16 @@
 import { FC, useState } from 'react';
 import { debounce } from '../lib/helpers';
+import { LVP } from '../lib/interfaces';
 
-export const Autocomplete: FC<IAutoCompleteProps> = ({ onSelect, renderItems, value }: IAutoCompleteProps) => {
+export interface IAutoCompleteProps {
+  onSelect: Function;
+  renderItems: Function;
+  value: string;
+  options: string[];
+}
 
-  const [options, setOptions] = useState([]);
+export const Autocomplete: FC<IAutoCompleteProps> = ({ onSelect, renderItems, options, value }) => {
+
   const [matches, setMatches] = useState([]);
   const [currentValue, setCurrentValue] = useState(value || '');
 
@@ -93,9 +100,3 @@ export const Autocomplete: FC<IAutoCompleteProps> = ({ onSelect, renderItems, va
     </div>
   );
 };
-
-export interface IAutoCompleteProps {
-  onSelect: Function;
-  renderItems: Function;
-  value: string;
-}

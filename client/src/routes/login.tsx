@@ -2,6 +2,9 @@ import React, { FC, useState, useRef } from 'react';
 import Rest from '../lib/rest-service';
 import { Link } from 'react-router-dom';
 import LocalStorageService from '../lib/local-storage-service';
+import { createBrowserHistory } from 'history';
+
+const history = createBrowserHistory();
 
 interface ILoginProps {
   user: any;
@@ -14,7 +17,7 @@ export const Login: FC<ILoginProps> = (props) => {
   const { user, returnUrl, config, loginCb } = props;
   if (user) {
     let redirect = returnUrl ? returnUrl : '';
-    window.location.assign(`/${redirect}`);
+    history.push(`/${redirect}`);
   }
 
   const emailRef = useRef<HTMLInputElement>(null);
