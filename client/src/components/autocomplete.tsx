@@ -57,13 +57,13 @@ export const Autocomplete: FC<IAutoCompleteProps> = ({ onSelect, renderItems, op
     else {
       setCurrentValue(e.target.value);
       let m = currentValue.length > 1 ? options.filter(o => o.toLowerCase().indexOf(currentValue.toLowerCase()) !== -1) : [];
-      m = m.map((m, i) => {
+      let autoMatches = m.map((m, i) => {
         return {
           val: m,
           highlighted: i === 0
         };
       });
-      setMatches(m);
+      setMatches(autoMatches);
     }
   }, 10);
 
