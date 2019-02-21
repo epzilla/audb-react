@@ -1,106 +1,105 @@
-import { Component } from 'react';
+import { Component, useState, FC, useEffect, useRef } from 'react';
 import Rest from '../lib/rest-service';
 import LocalStorageService from '../lib/local-storage-service';
 import { DepthChart } from '../components/DepthChart';
 import { EditablePlayerSlideOut } from '../components/EditablePlayerSlideout';
 import { InactivePlayersTable } from '../components/InactivePlayersTable';
 import { Expandable } from '../components/Expandable';
-import EditableTable from '../components/EditableTable';
+import { EditableTable } from '../components/EditableTable';
 import CSSTransitionGroup from 'react-transition-group';
+import { createBrowserHistory } from 'history';
+import config from '../config';
 
-export default class Admin extends Component {
-  constructor(props) {
-    super(props);
-    if (!props.user) {
-      route('/');
-    }
-    this.refreshCallback = null;
-    this.positions = ['QB', 'RB', 'FB', 'TE', 'WR', 'OL', 'DE', 'DT', 'LB', 'CB', 'S', 'K', 'P'];
-    this.truePositions = [
-      'QB', 'RB', 'FB', 'TE', 'WR2', 'WR9', 'Slot', 'LT', 'LG', 'C', 'RG', 'RT',
-      'WDE', 'SDE', 'NG', 'DT', 'WLB', 'MLB', 'SLB', 'LCB', 'RCB', 'FS', 'SS', 'K', 'P'
-    ];
-    this.states = [
-      'AK', 'AL', 'AR', 'AS', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'GA', 'GU',
-      'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN',
-      'MO', 'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK',
-      'OR', 'PA', 'PR', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VA', 'VI', 'VT', 'WA',
-      'WI', 'WV', 'WY'
-    ];
-    this.recTableHeaders = [
-      { title: 'First', name: 'fname', type: 'text'},
-      { title: 'Last', name: 'lname', type: 'text'},
-      { name: 'pos', type: 'select', options: this.positions},
-      { name: 'truePos', title: 'Sub-Pos', type: 'select', options: this.truePositions},
-      { name: 'city', type: 'text'},
-      { name: 'state', type: 'select', options: this.states},
-      { title: 'HS', name: 'hs', type: 'text'},
-      { name: 'height', type: 'text'},
-      { name: 'weight', type: 'number'},
-      { title: 'R Rank', name: 'rivalsRank', type: 'number'},
-      { title: 'R *', name: 'rivalsStars', type: 'number'},
-      { title: 'S Rank', name: 'scoutRank', type: 'number'},
-      { title: 'S *', name: 'scoutStars', type: 'number'},
-      { title: 'Early?', name: 'earlyEnrollee', type: 'boolean'}
-    ];
-    let d = new Date();
-    this.currentRecYear = d.getMonth() < 2 ? d.getFullYear() : d.getFullYear() + 1;
-    this.currentYear = d.getFullYear();
-    this.years = [];
-    for (let i = this.currentYear + 2; i >= this.props.config.firstSeason; i--) {
-      this.years.push(i);
-    }
-    this.recYears = [];
-    for (let i = this.currentRecYear + 2; i >= this.props.config.firstTrackedRecruitingSeason; i--) {
-      this.recYears.push(i);
-    }
-    this.state = {
-      players: {},
-      recruits: [],
-      games: [],
-      playerSlideOut: null,
-      scheduleYear: this.currentYear,
-      recYear: this.currentRecYear,
-      opponentOptions: [],
-      locationOptions: [],
-      gameTableHeaders: [],
-      confirmAction: null,
-      confirmModal: false,
-      confirmText: null
-    };
+const history = createBrowserHistory();
+const positions = ['QB', 'RB', 'FB', 'TE', 'WR', 'OL', 'DE', 'DT', 'LB', 'CB', 'S', 'K', 'P'];
+const truePositions = [
+  'QB', 'RB', 'FB', 'TE', 'WR2', 'WR9', 'Slot', 'LT', 'LG', 'C', 'RG', 'RT',
+  'WDE', 'SDE', 'NG', 'DT', 'WLB', 'MLB', 'SLB', 'LCB', 'RCB', 'FS', 'SS', 'K', 'P'
+];
+const states = [
+  'AK', 'AL', 'AR', 'AS', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'GA', 'GU',
+  'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN',
+  'MO', 'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK',
+  'OR', 'PA', 'PR', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VA', 'VI', 'VT', 'WA',
+  'WI', 'WV', 'WY'
+];
+const recTableHeaders = [
+  { title: 'First', name: 'fname', type: 'text' },
+  { title: 'Last', name: 'lname', type: 'text' },
+  { name: 'pos', type: 'select', options: positions },
+  { name: 'truePos', title: 'Sub-Pos', type: 'select', options: truePositions },
+  { name: 'city', type: 'text' },
+  { name: 'state', type: 'select', options: states },
+  { title: 'HS', name: 'hs', type: 'text' },
+  { name: 'height', type: 'text' },
+  { name: 'weight', type: 'number' },
+  { title: 'R Rank', name: 'rivalsRank', type: 'number' },
+  { title: 'R *', name: 'rivalsStars', type: 'number' },
+  { title: 'S Rank', name: 'scoutRank', type: 'number' },
+  { title: 'S *', name: 'scoutStars', type: 'number' },
+  { title: 'Early?', name: 'earlyEnrollee', type: 'boolean' }
+];
+const d = new Date();
+const currentRecYear = d.getMonth() < 2 ? d.getFullYear() : d.getFullYear() + 1;
+const currentYear = d.getFullYear();
+const years = [];
+for (let i = currentYear + 2; i >= config.firstSeason; i--) {
+  years.push(i);
+}
+const recYears = [];
+for (let i = currentRecYear + 2; i >= config.firstTrackedRecruitingSeason; i--) {
+  recYears.push(i);
+}
+let conferences;
+Rest.get('conferences').then(c => {
+  conferences = c;
+});
+
+interface IAdminViewProps {
+  user: any;
+}
+
+export const AdminView: FC<IAdminViewProps> = (props) => {
+  if (!props.user) {
+    history.push('/');
   }
+  const [players, setPlayers] = useState({});
+  const [recruits, setRecruits] = useState([]);
+  const [games, setGames] = useState([]);
+  const [playerSlideOut, setPlayerSlideOut] = useState(null);
+  const [scheduleYear, setScheduleYear] = useState(currentYear);
+  const [recYear, setRecYear] = useState(currentRecYear);
+  const [opponentOptions, setOpponentOptions] = useState([]);
+  const [locationOptions, setLocationOptions] = useState([]);
+  const [gameTableHeaders, setGameTableHeaders] = useState([]);
+  const [confirmAction, setConfirmAction] = useState(null);
+  const [confirmModal, setConfirmModal] = useState(false);
+  const [confirmText, setConfirmText] = useState(null);
+  const refreshCallback = useRef<Function>(null);
 
-  componentWillReceiveProps(nextProps) {
-    if (!nextProps.user) {
-      route('/');
-    }
-  }
+  useEffect(() => {
+    getPlayers();
+    getGames(currentYear);
+    getRecruits(currentRecYear);
 
-  componentDidMount() {
-    this.getPlayers();
-    this.getGames(this.currentYear);
-    this.getRecruits(this.currentRecYear);
-    Rest.get('conferences').then(conferences => {
-      this.conferences = conferences;
-    });
 
     Promise.all([
       Rest.get('locations'),
       Rest.get('opponents')
-    ]).then(([ locationOptions, opponentOptions ]) => {
-      let gameTableHeaders = [
+    ]).then(([locOptions, oppOptions]) => {
+      let gtHeaders = [
         { name: 'game', type: 'text' },
         { name: 'date', type: 'date' },
         {
           name: 'opponent',
           type: 'autocomplete',
-          items: opponentOptions.map(o => o.name),
+          items: oppOptions.map(o => o.name),
           render: (items) => {
             return items.map(item => {
               let classes = item.highlighted ? 'option highlighted' : 'option';
               return (
-                <li className={ classes } onClick={this.onClick} data-item={item}>
-                  <div className={`team-logo logo-${ item.val.replace(/\s+/g, '').replace(/&/g, '').replace(/\./g, '') }`}></div>
+                <li className={classes} onClick={() => {}} data-item={item}>
+                  <div className={`team-logo logo-${item.val.replace(/\s+/g, '').replace(/&/g, '').replace(/\./g, '')}`}></div>
                   {item.val}
                 </li>
               );
@@ -112,12 +111,12 @@ export default class Admin extends Component {
         {
           name: 'location',
           type: 'autocomplete',
-          items: locationOptions,
+          items: locOptions,
           render: (items) => {
             return items.map(item => {
               let classes = item.highlighted ? 'option highlighted' : 'option';
               return (
-                <li className={ classes } onClick={this.onClick} data-item={item}>
+                <li className={classes} onClick={() => {}} data-item={item}>
                   {item.val}
                 </li>
               );
@@ -126,113 +125,119 @@ export default class Admin extends Component {
         }
       ];
 
-      this.setState({ opponentOptions, locationOptions, gameTableHeaders });
+      setOpponentOptions(oppOptions);
+      setLocationOptions(locOptions);
+      setGameTableHeaders(gtHeaders);
     });
-  }
+  }, []);
 
-  getPlayers = () => {
-    let players = LocalStorageService.get('players');
-    if (players) {
-      this.setState({ players });
+  const getPlayers = async () => {
+    let pls = LocalStorageService.get('players');
+    if (pls) {
+      setPlayers(pls);
     }
 
-    Rest.get('playersByPos').then(pls => {
-      if (JSON.stringify(pls) !== JSON.stringify(players)) {
-        this.setState({ players: pls });
-        if (this.refreshCallback) {
-          this.refreshCallback();
-        }
+    const plsByPos = await Rest.get('playersByPos')
+    if (JSON.stringify(pls) !== JSON.stringify(plsByPos)) {
+      setPlayers(plsByPos);
+      if (refreshCallback.current) {
+        refreshCallback.current();
       }
-    });
+    }
   };
 
-  getGames = (year) => {
-    Rest.get(`year/${year}`).then(res => {
-      this.setState({ games: res });
-    });
+  const getGames = async (year) => {
+    const res = await Rest.get(`year/${year}`);
+    setGames(res);
   };
 
-  getRecruits = (year) => {
-    Rest.get(`recruits/${year}`).then(res => {
-      this.setState({ recruits: res });
-    });
+  const getRecruits = async (year?) => {
+    const res = await Rest.get(`recruits/${year || currentRecYear}`);
+    setRecruits(res);
   };
 
-  showPlayerSlideOut = (player) => {
-    this.setState({ playerSlideOut: player });
+  const showPlayerSlideOut = (player) => {
+    setPlayerSlideOut(player);
   };
 
-  dismissPlayerSlideOut = () => {
-    this.setState({ playerSlideOut: null });
+  const dismissPlayerSlideOut = () => {
+    setPlayerSlideOut(null);
   };
 
-  savePlayer = (player) => {
-    Rest.post(`player/${player._id}`, player).then(() => {
-      this.getPlayers();
-      this.dismissPlayerSlideOut();
-    });
+  const savePlayer = async (player) => {
+    await Rest.post(`player/${player._id}`, player);
+    getPlayers();
+    dismissPlayerSlideOut();
   };
 
-  swapPlayers = (player, replacedPlayer, insertFirst, insertLast) => {
-    Rest.post('posChange', { player, replacedPlayer, insertFirst, insertLast }).then(() => {
-      this.getPlayers();
-    }).catch(e => {
+  const swapPlayers = async (player, replacedPlayer, insertFirst, insertLast) => {
+    try {
+      await Rest.post('posChange', { player, replacedPlayer, insertFirst, insertLast });
+      getPlayers();
+    }
+    catch (e) {
       console.error(e);
-    });
+    };
   };
 
-  registerRefreshCallback = (cb) => {
-    this.refreshCallback = cb;
+  const registerRefreshCallback = (cb) => {
+    refreshCallback.current = cb;
   };
 
-  saveGameRow = (game) => {
+  const saveGameRow = async (game) => {
     // We first have to correctly set the conference info, etc.
-    let conf = this.conferences.find(c => c.members.indexOf(game.opponent) !== -1);
+    let conf = conferences.find(c => c.members.indexOf(game.opponent) !== -1);
     if (conf) {
       game.conference = conf.conference;
       game.currentConf = conf.conference;
       game.majorConf = conf.majorConf;
       game.fbs = conf.fbs;
       game.fcs = conf.fcs;
-      game.confGame = conf.conference.indexOf(this.props.config.conference) !== -1;
+      game.confGame = conf.conference.indexOf(config.conference) !== -1;
     }
-    Rest.post('games', game).catch(e => {
+    try {
+      await Rest.post('games', game);
+      return;
+    }
+    catch (e) {
       console.error(e);
-    });
+    }
   };
 
-  saveRecRow = (rec, i) => {
-    Rest.post('recruits', rec).then(recruit => {
-      let recruits = this.state.recruits;
-      recruits[i] = recruit;
-      this.setState({ recruits });
-    }).catch(e => {
+  const saveRecRow = async (rec, i) => {
+    try {
+      const recruit = await Rest.post('recruits', rec);
+      let recs = [ ...recruits ];
+      recs[i] = recruit;
+      setRecruits(recs);
+    }
+    catch (e) {
       console.error(e);
-    });
+    }
   };
 
-  setScheduleYear = (e) => {
-    let year = parseInt(e.target.value);
-    this.setState({ scheduleYear: year });
-    this.getGames(year);
+  const setSchedYear = (e) => {
+    let schedYear = parseInt(e.target.value);
+    setSchedYear(schedYear)
+    getGames(schedYear);
   };
 
-  setRecruitsYear = (e) => {
-    let year = parseInt(e.target.value);
-    this.setState({ recYear: year });
-    this.getRecruits(year);
+  const setRecruitsYear = (e) => {
+    let recruitsYear = parseInt(e.target.value);
+    setRecYear(recruitsYear)
+    getRecruits(recruitsYear);
   };
 
-  addRecruit = () => {
+  const addRecruit = () => {
     let protoRecruit = {
       fname: 'John',
       lname: 'Doe',
       pos: 'QB',
       truePos: 'QB',
-      class: this.state.recYear,
-      city: this.props.config.city.slice(0, -4),
-      state: this.props.config.city.slice(-2),
-      hs: this.props.config.city.slice(0, -4),
+      class: recYear,
+      city: config.city.slice(0, -4),
+      state: config.city.slice(-2),
+      hs: config.city.slice(0, -4),
       height: '6-2',
       weight: 200,
       rivalsRank: 25,
@@ -241,14 +246,14 @@ export default class Admin extends Component {
       scoutStars: 4,
       earlyEnrollee: false
     };
-    let recruits = this.state.recruits;
-    recruits.push(protoRecruit);
-    this.setState({ recruits });
+    let recs = [ ...recruits ];
+    recs.push(protoRecruit);
+    setRecruits(recs);
   };
 
-  addGame = () => {
-    let games = this.state.games;
-    let lastGame = this.state.games[this.state.games.length - 1];
+  const addGame = () => {
+    let allGames = [ ...games ];
+    let lastGame = allGames[allGames.length - 1];
     let newDate;
 
     if (lastGame) {
@@ -263,7 +268,7 @@ export default class Admin extends Component {
       // Let's make a reasonable guess here, starting at the first
       // Saturday on or after August 30th
       newDate = new Date();
-      newDate.setFullYear(this.state.scheduleYear);
+      newDate.setFullYear(scheduleYear);
       newDate.setMonth(7);
       newDate.setDate(30);
       while (newDate.getDay() !== 6) {
@@ -281,207 +286,209 @@ export default class Admin extends Component {
     }
 
     let protoGame = {
-      season: this.state.scheduleYear,
-      opponent: this.state.opponentOptions[0].name,
+      season: scheduleYear,
+      opponent: opponentOptions[0].name,
       game: lastGame ? lastGame.game + 1 : 1,
       result: 'T',
       date: `${newDate.getFullYear()}-${month}-${day}`,
       homeAwayNeutral: 'H',
-      location: this.props.config.city,
+      location: config.city,
       teamScore: 0,
       opScore: 0,
-      conference: this.props.config.conference,
+      conference: config.conference,
       gameId: lastGame ? lastGame.gameId + 1 : null
     };
 
-    delete protoGame._id;
-    delete protoGame.__v;
-    games.push(protoGame);
-    this.setState({ games });
+    delete protoGame['_id'];
+    delete protoGame['__v'];
+    allGames.push(protoGame);
+    setGames(allGames);
   };
 
-  deleteGameRow = (i, deletedGame) => {
-    Rest.del(`games/${deletedGame._id}`, deletedGame).then(() => {
-      this.getGames(this.state.scheduleYear);
-    }).catch(e => {
-      console.error(e);
-    });
-  };
-
-  deleteRecRow = (i, deletedRecruit) => {
-    Rest.del(`recruit/${deletedRecruit._id}`, deletedRecruit).then(() => {
-      this.getRecruits(this.currentRecYear);
-    }).catch(e => {
-      console.error(e);
-    });
-  };
-
-  maybePerformAction = (action, confirmText) => {
-    let confirmAction = this[action];
-    this.setState({ confirmModal: true, confirmAction, confirmText });
-  };
-
-  dismissConfirmModal = () => {
-    this.setState({ confirmModal: false, confirmAction: null, confirmText: null });
-  };
-
-  advancePlayers = () => {
-    Rest.post('advancePlayers').then(() => {
-      this.getPlayers();
-      this.dismissConfirmModal();
-    });
-  };
-
-  enrollEarly = () => {
-    Rest.post('recruits/enroll?early=true').then(() => {
-      this.getPlayers();
-      this.getRecruits();
-      this.dismissConfirmModal();
-    });
-  };
-
-  enrollAll = () => {
-    Rest.post('recruits/enroll').then(() => {
-      this.getPlayers();
-      this.getRecruits();
-      this.dismissConfirmModal();
-    });
-  };
-
-  fixStringNumbers = () => {
-    Rest.post('fixStringNumbers').then(() => {
-      this.getPlayers();
-      this.dismissConfirmModal();
-    });
-  };
-
-  render() {
-    let depth, playerSlideOut;
-    let confirmModal = [];
-
-    if (this.state.players && this.state.playerSlideOut) {
-      playerSlideOut = <EditablePlayerSlideOut player={this.state.playerSlideOut} dismiss={this.dismissPlayerSlideOut} save={(player) => this.savePlayer(player)} />;
+  const deleteGameRow = async (i, deletedGame) => {
+    try {
+      await Rest.del(`games/${deletedGame._id}`, deletedGame)
+      getGames(scheduleYear);
     }
+    catch (e) {
+      console.error(e);
+    }
+  };
 
-    if (this.state.confirmModal && typeof this.state.confirmAction === 'function') {
-      confirmModal = (
-        <div>
-          <div className="modal-backdrop"></div>
-          <div className="modal scale-in confirm-modal">
-            <div className="modal-header">
-              <h2>Are you sure you want to {this.state.confirmText}?</h2>
-              <button className="dismiss-btn" onClick={() => this.dismissConfirmModal()}>&times;</button>
-            </div>
-            <div className="modal-body flex">
-              <div className="btn-container">
-                <button className="btn primary" onClick={() => this.state.confirmAction()}>Yes</button>
-                <button className="btn" onClick={() => this.dismissConfirmModal()}>No</button>
-              </div>
+  const deleteRecRow = async (i, deletedRecruit) => {
+    try {
+      await Rest.del(`recruit/${deletedRecruit._id}`, deletedRecruit);
+      getRecruits(currentRecYear);
+    }
+    catch (e) {
+      console.error(e);
+    };
+  };
+
+  const maybePerformAction = (action, confText) => {
+    let confAction = this[action];
+    setConfirmAction(confAction);
+    setConfirmText(confText);
+    setConfirmModal(true);
+  };
+
+  const dismissConfirmModal = () => {
+    setConfirmAction(null);
+    setConfirmText(null);
+    setConfirmModal(false);
+  };
+
+  const advancePlayers = async () => {
+    await Rest.post('advancePlayers')
+    getPlayers();
+    dismissConfirmModal();
+  };
+
+  const enrollEarly = async () => {
+    await Rest.post('recruits/enroll?early=true');
+    getPlayers();
+    getRecruits();
+    dismissConfirmModal();
+  };
+
+  const enrollAll = async () => {
+    await Rest.post('recruits/enroll');
+    getPlayers();
+    getRecruits();
+    dismissConfirmModal();
+  };
+
+  const fixStringNumbers = async () => {
+    await Rest.post('fixStringNumbers');
+    getPlayers();
+    dismissConfirmModal();
+  };
+
+  let depth, plSlideOut;
+  let confModal;
+
+  if (players && playerSlideOut) {
+    plSlideOut = <EditablePlayerSlideOut player={playerSlideOut} dismiss={dismissPlayerSlideOut} save={(player) => savePlayer(player)} />;
+  }
+
+  if (confirmModal && typeof confirmAction === 'function') {
+    confModal = (
+      <div>
+        <div className="modal-backdrop"></div>
+        <div className="modal scale-in confirm-modal">
+          <div className="modal-header">
+            <h2>Are you sure you want to {confirmText}?</h2>
+            <button className="dismiss-btn" onClick={() => dismissConfirmModal()}>&times;</button>
+          </div>
+          <div className="modal-body flex">
+            <div className="btn-container">
+              <button className="btn primary" onClick={() => confirmAction()}>Yes</button>
+              <button className="btn" onClick={() => dismissConfirmModal()}>No</button>
             </div>
           </div>
         </div>
-      );
-    }
-
-    return (
-      <div className="main admin">
-        <h1>Admin</h1>
-
-        <CSSTransitionGroup
-          transitionName="slide-out"
-          transitionAppear={true}
-          trasnsitionLeave={true}
-          transitionEnter={true}
-          transitionEnterTimeout={0}
-          transitionLeaveTimeout={0}>
-          {playerSlideOut || []}
-        </CSSTransitionGroup>
-
-        <Expandable title="Edit Depth Chart" defaultCollapsed>
-          <DepthChart
-            selectedCallback={(player) => this.showPlayerSlideOut(player)}
-            players={this.state.players}
-            swapPlayers={this.swapPlayers}
-            editable
-          />
-        </Expandable>
-
-        <hr />
-
-        <Expandable title="Inactive Players" defaultCollapsed>
-          <InactivePlayersTable
-            playerReactivated={() => this.getPlayers()}
-            registerForRefresh={cb => this.registerRefreshCallback(cb)}
-          />
-        </Expandable>
-
-        <hr />
-
-        <Expandable className="flex-center" title="Edit Schedule" defaultCollapsed>
-          <select onChange={this.setScheduleYear}>
-            {
-              this.years.map(y => {
-                return <option value={y} selected={y === this.state.scheduleYear}>{y}</option>
-              })
-            }
-          </select>
-          <EditableTable
-            className="capped-size-table"
-            headers={this.state.gameTableHeaders}
-            data={this.state.games || []}
-            autoSaveRow={true}
-            rowSaveCallback={this.saveGameRow}
-            rowDeleteCallback={this.deleteGameRow}
-            deleteButton
-          />
-          <button className="btn primary" onClick={this.addGame}>Add Game</button>
-        </Expandable>
-
-        <hr />
-
-        <Expandable className="flex-center" title="Edit Recruits" defaultCollapsed>
-          <select onChange={this.setRecruitsYear}>
-            {
-              this.recYears.map(y => {
-                return <option value={y} selected={y === this.state.recYear}>{y}</option>
-              })
-            }
-          </select>
-          <EditableTable
-            headers={this.recTableHeaders}
-            data={this.state.recruits || []}
-            autoSaveRow={true}
-            rowSaveCallback={this.saveRecRow}
-            rowDeleteCallback={this.deleteRecRow}
-            deleteButton
-          />
-          <button className="btn primary" onClick={this.addRecruit}>Add Recruit</button>
-        </Expandable>
-
-        <hr />
-
-        <Expandable title="One-Click Actions" defaultCollapsed>
-          <h2>Fix string numbers</h2>
-          <button className="btn primary" onClick={() => this.maybePerformAction('fixStringNumbers', 'Fix String Numbers')}>Fix</button>
-          <h2>Advance Players</h2>
-          <button className="btn primary" onClick={() => this.maybePerformAction('advancePlayers', 'Advance Players')}>Advance</button>
-          <h2>Enroll Early Recruits</h2>
-          <button className="btn primary" onClick={() => this.maybePerformAction('enrollEarly', 'Enroll all early recruits')}>Enroll</button>
-          <h2>Enroll All Recruits</h2>
-          <button className="btn primary" onClick={() => this.maybePerformAction('enrollAll', 'Enroll all recruits')}>Enroll</button>
-        </Expandable>
-
-        <CSSTransitionGroup
-          className="full-width"
-          transitionName="modal-pop-in"
-          transitionAppear={true}
-          trasnsitionLeave={true}
-          transitionEnter={true}
-          transitionEnterTimeout={150}
-          transitionLeaveTimeout={150}>
-          { confirmModal }
-        </CSSTransitionGroup>
       </div>
     );
   }
+
+  return (
+    <div className="main admin">
+      <h1>Admin</h1>
+
+      <CSSTransitionGroup
+        transitionName="slide-out"
+        transitionAppear={true}
+        trasnsitionLeave={true}
+        transitionEnter={true}
+        transitionEnterTimeout={0}
+        transitionLeaveTimeout={0}>
+        {plSlideOut || []}
+      </CSSTransitionGroup>
+
+      <Expandable title="Edit Depth Chart" defaultCollapsed>
+        <DepthChart
+          selectedCallback={(player) => showPlayerSlideOut(player)}
+          players={players}
+          swapPlayers={swapPlayers}
+          editable
+        />
+      </Expandable>
+
+      <hr />
+
+      <Expandable title="Inactive Players" defaultCollapsed>
+        <InactivePlayersTable
+          playerReactivated={() => getPlayers()}
+          registerForRefresh={cb => registerRefreshCallback(cb)}
+        />
+      </Expandable>
+
+      <hr />
+
+      <Expandable className="flex-center" title="Edit Schedule" defaultCollapsed>
+        <select onChange={setSchedYear}>
+          {
+            years.map(y => {
+              return <option value={y} selected={y === scheduleYear}>{y}</option>
+            })
+          }
+        </select>
+        <EditableTable
+          className="capped-size-table"
+          headers={gameTableHeaders}
+          data={games || []}
+          autoSaveRow={true}
+          rowSaveCallback={saveGameRow}
+          rowDeleteCallback={deleteGameRow}
+          deleteButton
+        />
+        <button className="btn primary" onClick={addGame}>Add Game</button>
+      </Expandable>
+
+      <hr />
+
+      <Expandable className="flex-center" title="Edit Recruits" defaultCollapsed>
+        <select onChange={setRecruitsYear}>
+          {
+            recYears.map(y => {
+              return <option value={y} selected={y === recYear}>{y}</option>
+            })
+          }
+        </select>
+        <EditableTable
+          headers={recTableHeaders}
+          data={recruits || []}
+          autoSaveRow={true}
+          rowSaveCallback={saveRecRow}
+          rowDeleteCallback={deleteRecRow}
+          deleteButton
+        />
+        <button className="btn primary" onClick={addRecruit}>Add Recruit</button>
+      </Expandable>
+
+      <hr />
+
+      <Expandable title="One-Click Actions" defaultCollapsed>
+        <h2>Fix string numbers</h2>
+        <button className="btn primary" onClick={() => maybePerformAction('fixStringNumbers', 'Fix String Numbers')}>Fix</button>
+        <h2>Advance Players</h2>
+        <button className="btn primary" onClick={() => maybePerformAction('advancePlayers', 'Advance Players')}>Advance</button>
+        <h2>Enroll Early Recruits</h2>
+        <button className="btn primary" onClick={() => maybePerformAction('enrollEarly', 'Enroll all early recruits')}>Enroll</button>
+        <h2>Enroll All Recruits</h2>
+        <button className="btn primary" onClick={() => maybePerformAction('enrollAll', 'Enroll all recruits')}>Enroll</button>
+      </Expandable>
+
+      <CSSTransitionGroup
+        className="full-width"
+        transitionName="modal-pop-in"
+        transitionAppear={true}
+        trasnsitionLeave={true}
+        transitionEnter={true}
+        transitionEnterTimeout={150}
+        transitionLeaveTimeout={150}>
+        {confModal || []}
+      </CSSTransitionGroup>
+    </div>
+  );
 }

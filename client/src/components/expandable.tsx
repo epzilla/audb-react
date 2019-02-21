@@ -5,6 +5,7 @@ interface IExpandableProps extends Props<HTMLDivElement> {
   centered?: boolean;
   small?: boolean;
   title?: string;
+  className?: string;
 }
 
 export const Expandable: FC<IExpandableProps> = ({ defaultCollapsed, centered, small, title, children }) => {

@@ -1,7 +1,7 @@
 import { FC } from 'react';
 
 interface IDepthChartProps {
-  players: any[];
+  players: any;
   selectedCallback: Function;
   editable?: boolean;
   swapPlayers?: Function;
