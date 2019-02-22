@@ -1,4 +1,4 @@
-import { FC, useState, useRef } from 'react';
+import { FC, useState, useRef, useEffect } from 'react';
 import Rest from '../lib/rest-service';
 import LocalStorageService from '../lib/local-storage-service';
 import config from '../config';
@@ -33,6 +33,12 @@ export const RecruitingView: FC = () => {
   const [sortCol, setSortCol] = useState('lname');
   const [sortAsc, setSortAsc] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    getRecruits(currentYear);
+    document.addEventListener('keyup', onKeyUp);
+    return () => document.removeEventListener('keyup', onKeyUp);
+  }, []);
 
   const onKeyUp = ({ key, target, shiftKey }) => {
     if (target.nodeName !== 'INPUT') {
@@ -223,31 +229,3 @@ export const RecruitingView: FC = () => {
     </div>
   );
 };
-
-
-// export default class Recruiting extends Component {
-
-//     state = {
-//       year: currentYear,
-//       recruits: [],
-//       sortCol: null,
-//       sortAsc: true
-//     };
-
-//     getRecruits(currentYear);
-//   }
-
-//   componentDidMount() {
-//     document.removeEventListener('keyup', onKeyUp);
-//     document.addEventListener('keyup', onKeyUp);
-//   }
-
-//   componentWillUnmount() {
-//     document.removeEventListener('keyup', onKeyUp);
-//   }
-
-
-
-//   render() {
-
-// }
