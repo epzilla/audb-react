@@ -102,19 +102,21 @@ export const StatsTable: FC<IStatsTableProps> = (props) => {
       { showRecord ? <h2 className="record align-center">Record: { record }</h2> : null }
       <table className="stats-table center capped-size-table">
         <thead>
-          <th>
-            <span className="larger">Date</span>
-            <span className="smaller">Year</span>
-          </th>
-          <th className="center">W/L</th>
-          <th></th>
-          <th>Team</th>
-          <th>Score</th>
-          <th className="center">
-            <span className="larger">Location</span>
-            <span className="smaller">Loc</span>
-          </th>
-          { user ? <th>Attended?</th> : null }
+          <tr>
+            <th>
+              <span className="larger">Date</span>
+              <span className="smaller">Year</span>
+            </th>
+            <th className="center">W/L</th>
+            <th></th>
+            <th>Team</th>
+            <th>Score</th>
+            <th className="center">
+              <span className="larger">Location</span>
+              <span className="smaller">Loc</span>
+            </th>
+            {user ? <th>Attended?</th> : null}
+          </tr>
         </thead>
         <tbody>{ rows }</tbody>
       </table>

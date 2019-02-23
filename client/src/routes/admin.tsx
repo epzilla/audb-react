@@ -6,7 +6,7 @@ import { EditablePlayerSlideOut } from '../components/EditablePlayerSlideout';
 import { InactivePlayersTable } from '../components/InactivePlayersTable';
 import { Expandable } from '../components/Expandable';
 import { EditableTable } from '../components/EditableTable';
-import CSSTransitionGroup from 'react-transition-group';
+import { CSSTransitionGroup } from 'react-transition-group';
 import { createBrowserHistory } from 'history';
 import config from '../config';
 

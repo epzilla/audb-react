@@ -127,7 +127,7 @@ export const EditableTable: FC<IEditableTableProps> = (props) => {
   return (
     <table className={`editable-table ${className ? className : ''}`}>
       <thead>
-        {headers}
+        {headerRowCells}
       </thead>
       <tbody>
         {rows}
