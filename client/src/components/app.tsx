@@ -151,7 +151,7 @@ export default class App extends Component<{}, IAppState> {
             />
             <KeyboardShortcutHelp show={this.state.kb} dismiss={this.hideKeyboardShortcuts} />
             <audio preload="auto" id="highlight-sound" src={config.highlightSound} />
-            <audio preload="auto" id="secret-sound" src="/assets/secret.wav" />
+            <audio preload="auto" id="secret-sound" src="/sounds/secret.wav" />
           </div>
       </UserContext.Provider>
     );

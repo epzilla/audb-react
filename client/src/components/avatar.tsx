@@ -77,7 +77,7 @@ export const Avatar: FC<IAvatarProps> = ({ avatar, avatarUpdatedCallback, big, e
           onDragLeave={handleDragleave}
           onDrop={handleDrop}
           style={{
-            backgroundImage: avi ? `url(${avi})` : `url(/assets/images/default_avatar.png)`
+            backgroundImage: avi ? `url(${avi})` : `url(/images/default_avatar.png)`
           }}>
           <input type="file" value={newAvatar} onChange={processChange} />
           <div className="edit-overlay">
@@ -90,7 +90,7 @@ export const Avatar: FC<IAvatarProps> = ({ avatar, avatarUpdatedCallback, big, e
     return (
       <div className={ classes }
         style={{
-          backgroundImage: avatar ? `url(${avatar})` : `url(/assets/images/default_avatar.png)`
+          backgroundImage: avatar ? `url(${avatar})` : `url(/images/default_avatar.png)`
         }}
       ></div>
     );

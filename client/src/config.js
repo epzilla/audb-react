@@ -6,7 +6,7 @@ export default {
   division: 'West',
   city: 'Auburn, AL',
   teamSlogan: 'War Eagle',
-  footerImg: '/assets/images/eagle-2.png',
+  footerImg: '/images/eagle-2.png',
   loginPlaceholderEmail: 'arthur.gustav.malzahn.iii@auburn.edu',
   loginPlaceholderPW: 'W@ff!3 H0u$e',
   signupPlaceholderName: 'Chris Davis',
@@ -37,17 +37,17 @@ export default {
   },
   highlightImages: {
     portrait: [
-      '/assets/images/tdpics/1.jpg',
-      '/assets/images/tdpics/4.jpg',
-      '/assets/images/tdpics/6.jpg'
+      '/images/tdpics/1.jpg',
+      '/images/tdpics/4.jpg',
+      '/images/tdpics/6.jpg'
     ],
     landscape: [
-      '/assets/images/tdpics/2.jpg',
-      '/assets/images/tdpics/3.jpg',
-      '/assets/images/tdpics/5.jpg'
+      '/images/tdpics/2.jpg',
+      '/images/tdpics/3.jpg',
+      '/images/tdpics/5.jpg'
     ]
   },
-  highlightSound: '/assets/images/tdau.wav',
+  highlightSound: '/sounds/tdau.wav',
   championships: {
     division: {
       'SEC West': [1997, 2000]
@@ -72,7 +72,7 @@ export default {
 //   division: 'East',
 //   city: 'Kent, OH',
 //   teamSlogan: 'Go Flashes',
-//   footerImg: '/assets/images/kent-state-golden-flashes-logo.png',
+//   footerImg: '/images/kent-state-golden-flashes-logo.png',
 //   loginPlaceholderEmail: 'paul.haynes@kent.edu',
 //   loginPlaceholderPW: 'g0 f1@$3ez!',
 //   signupPlaceholderName: 'Chris Davis',
@@ -103,17 +103,17 @@ export default {
 //   },
 //   highlightImages: {
 //     portrait: [
-//       '/assets/images/tdpics/1.jpg',
-//       '/assets/images/tdpics/4.jpg',
-//       '/assets/images/tdpics/6.jpg'
+//       '/images/tdpics/1.jpg',
+//       '/images/tdpics/4.jpg',
+//       '/images/tdpics/6.jpg'
 //     ],
 //     landscape: [
-//       '/assets/images/tdpics/2.jpg',
-//       '/assets/images/tdpics/3.jpg',
-//       '/assets/images/tdpics/5.jpg'
+//       '/images/tdpics/2.jpg',
+//       '/images/tdpics/3.jpg',
+//       '/images/tdpics/5.jpg'
 //     ]
 //   },
-//   highlightSound: '/assets/images/tdau.wav',
+//   highlightSound: '/sounds/tdau.wav',
 //   championships: {
 //     division: {
 //       'MAC East': [2012]
@@ -133,7 +133,7 @@ export default {
 //   division: 'North',
 //   city: 'Eugene, OR',
 //   teamSlogan: 'Go Ducks',
-//   footerImg: '/assets/images/oregon.png',
+//   footerImg: '/images/oregon.png',
 //   loginPlaceholderEmail: 'puddles@oregon.edu',
 //   loginPlaceholderPW: 'Qu@ck QuAcK!',
 //   signupPlaceholderName: 'Chris Davis',
@@ -164,17 +164,17 @@ export default {
 //   },
 //   highlightImages: {
 //     portrait: [
-//       '/assets/images/tdpics/1.jpg',
-//       '/assets/images/tdpics/4.jpg',
-//       '/assets/images/tdpics/6.jpg'
+//       '/images/tdpics/1.jpg',
+//       '/images/tdpics/4.jpg',
+//       '/images/tdpics/6.jpg'
 //     ],
 //     landscape: [
-//       '/assets/images/tdpics/2.jpg',
-//       '/assets/images/tdpics/3.jpg',
-//       '/assets/images/tdpics/5.jpg'
+//       '/images/tdpics/2.jpg',
+//       '/images/tdpics/3.jpg',
+//       '/images/tdpics/5.jpg'
 //     ]
 //   },
-//   highlightSound: '/assets/images/tdau.wav',
+//   highlightSound: '/sounds/tdau.wav',
 //   championships: {
 //     division: {
 //       'Pac-12 North': [2011, 2012, 2013, 2014]
@@ -195,7 +195,7 @@ export default {
 //   conference: 'Big XII',
 //   city: 'Norman, OK',
 //   teamSlogan: 'Boomer Sooner',
-//   footerImg: '/assets/images/ou.png',
+//   footerImg: '/images/ou.png',
 //   loginPlaceholderEmail: 'lincoln.riley@ou.edu',
 //   loginPlaceholderPW: 'Bo0Mer $00n3R!',
 //   signupPlaceholderName: 'Chris Davis',
@@ -226,17 +226,17 @@ export default {
 //   },
 //   highlightImages: {
 //     portrait: [
-//       '/assets/images/tdpics/1.jpg',
-//       '/assets/images/tdpics/4.jpg',
-//       '/assets/images/tdpics/6.jpg'
+//       '/images/tdpics/1.jpg',
+//       '/images/tdpics/4.jpg',
+//       '/images/tdpics/6.jpg'
 //     ],
 //     landscape: [
-//       '/assets/images/tdpics/2.jpg',
-//       '/assets/images/tdpics/3.jpg',
-//       '/assets/images/tdpics/5.jpg'
+//       '/images/tdpics/2.jpg',
+//       '/images/tdpics/3.jpg',
+//       '/images/tdpics/5.jpg'
 //     ]
 //   },
-//   highlightSound: '/assets/images/tdau.wav',
+//   highlightSound: '/sounds/tdau.wav',
 //   championships: {
 //     division: {
 //       'Big XII South': [2000, 2002, 2003, 2004, 2006, 2007, 2008, 2010]
@@ -265,7 +265,7 @@ export default {
 //   division: 'North',
 //   city: 'Seattle, WA',
 //   teamSlogan: 'Go Huskies',
-//   footerImg: '/assets/images/uw.png',
+//   footerImg: '/images/uw.png',
 //   loginPlaceholderEmail: 'chris.petersen@uw.edu',
 //   loginPlaceholderPW: 'G0 #u$kie$!',
 //   signupPlaceholderName: 'Chris Petersen',
@@ -296,17 +296,17 @@ export default {
 //   },
 //   highlightImages: {
 //     portrait: [
-//       '/assets/images/tdpics/1.jpg',
-//       '/assets/images/tdpics/4.jpg',
-//       '/assets/images/tdpics/6.jpg'
+//       '/images/tdpics/1.jpg',
+//       '/images/tdpics/4.jpg',
+//       '/images/tdpics/6.jpg'
 //     ],
 //     landscape: [
-//       '/assets/images/tdpics/2.jpg',
-//       '/assets/images/tdpics/3.jpg',
-//       '/assets/images/tdpics/5.jpg'
+//       '/images/tdpics/2.jpg',
+//       '/images/tdpics/3.jpg',
+//       '/images/tdpics/5.jpg'
 //     ]
 //   },
-//   highlightSound: '/assets/images/tdau.wav',
+//   highlightSound: '/sounds/tdau.wav',
 //   championships: {
 //     division: {
 //       'Pac-12 North': [2016]
@@ -332,7 +332,7 @@ export default {
 //   division: 'South',
 //   city: 'Los Angeles, CA',
 //   teamSlogan: 'Fight On',
-//   footerImg: '/assets/images/usc.png',
+//   footerImg: '/images/usc.png',
 //   loginPlaceholderEmail: 'menoftroy@usc.edu',
 //   loginPlaceholderPW: 'F!g#t 0n!',
 //   signupPlaceholderName: 'Carson Palmer',
@@ -363,17 +363,17 @@ export default {
 //   },
 //   highlightImages: {
 //     portrait: [
-//       '/assets/images/tdpics/1.jpg',
-//       '/assets/images/tdpics/4.jpg',
-//       '/assets/images/tdpics/6.jpg'
+//       '/images/tdpics/1.jpg',
+//       '/images/tdpics/4.jpg',
+//       '/images/tdpics/6.jpg'
 //     ],
 //     landscape: [
-//       '/assets/images/tdpics/2.jpg',
-//       '/assets/images/tdpics/3.jpg',
-//       '/assets/images/tdpics/5.jpg'
+//       '/images/tdpics/2.jpg',
+//       '/images/tdpics/3.jpg',
+//       '/images/tdpics/5.jpg'
 //     ]
 //   },
-//   highlightSound: '/assets/images/tdau.wav',
+//   highlightSound: '/sounds/tdau.wav',
 //   championships: {
 //     division: {
 //       'Pac-12 South': [2015]

@@ -239,7 +239,7 @@ export const YearlyResultsView: FC<IYearlyProps> = ({ toggleUserAttend }) => {
   const warYear = warYears && warYears.indexOf(year) !== -1 ? (
     <div className="jumbotron">
       <h1>Allies 1 - Axis 0</h1>
-      <img src="/assets/images/Uncle-Sam.jpg" />
+      <img src="/images/Uncle-Sam.jpg" />
     </div>
   ) : null;
 
