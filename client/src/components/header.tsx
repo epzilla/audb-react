@@ -7,13 +7,14 @@ import { UserContext } from './App';
 
 const history = createBrowserHistory();
 
-const HeaderLink: FC<LinkProps> = (props) => (
+const HeaderLink: FC<LinkProps> = (props) => {
+  return (
   <Link
-    className={history.location.pathname.startsWith(props.to as string) ? 'active' : ''}
+    className={window.location.pathname.startsWith(props.to as string) ? 'active' : ''}
     {...props}>
     {props.children}
   </Link>
-);
+)};
 
 interface IHeaderProps {
   menu?: boolean;
