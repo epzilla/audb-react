@@ -134,15 +134,15 @@ export const App: FC = (props) => {
       <div id="app">
         <Header
           menu={menu}
-          menuToggledCallback={(e) => menuToggledCallback(e)}
-          showKeyboardShortcuts={() => showKeyboardShortcuts()}
+          menuToggledCallback={menuToggledCallback}
+          showKeyboardShortcuts={showKeyboardShortcuts}
         />
-        <Route path="/" render={(props) => <Home games={games} config={config} />} />
+        <Route path="/" exact render={(props) => <Home games={games} config={config} />} />
         <Route path="/yearly" render={(props) => <YearlyResultsView toggleUserAttend={toggleUserAttend} />} />
         <Route path="/depth" component={Depth} />
-        <Route path="recruiting" component={RecruitingView} />
-        <Route path="stats" component={StatsView} />
-        <Route path="admin" component={AdminView} />
+        <Route path="/recruiting" component={RecruitingView} />
+        <Route path="/stats" component={StatsView} />
+        <Route path="/admin" component={AdminView} />
         <Route path="/login/:returnUrl?" render={(props) => <Login loginCb={onLogin} {...props} />} />
         <Route path="/logout/:returnUrl?" render={(props) => <Logout loginCb={onLogin} {...props} />} />
         <Route path="/sign-up/:returnUrl?" render={(props) => <Signup loginCb={onLogin} {...props} />} />
@@ -153,7 +153,7 @@ export const App: FC = (props) => {
           toggleKeyboardShortcuts={toggleKeyboardShortcuts}
           escape={escapeKeyCallback}
         />
-        <KeyboardShortcutHelp show={showKeyboardShortcuts} dismiss={hideKeyboardShortcuts} />
+        <KeyboardShortcutHelp show={showKbShortcuts} dismiss={hideKeyboardShortcuts} />
         <audio preload="auto" id="highlight-sound" src={config.highlightSound} />
         <audio preload="auto" id="secret-sound" src="/assets/secret.wav" />
       </div>

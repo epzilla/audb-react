@@ -182,26 +182,28 @@ export const RecruitingView: FC = () => {
       arrow = sortAsc ? <span className="sort-arrow">▲</span> : <span className="sort-arrow">▼</span>;
     }
 
-    return (<th className={className} onClick={() => sortByCol(col.field)}>{col.name}{arrow}</th>);
+    return (<th key={col.field} className={className} onClick={() => sortByCol(col.field)}>{col.name}{arrow}</th>);
   });
 
   return (
     <div className="main recruiting">
       <h1>{ config.team } Football Recruiting</h1>
-      <select className="big-select margin-bottom-1rem" onChange={onChange}>
+      <select className="big-select margin-bottom-1rem" onChange={onChange} value={year}>
         {
-          years.map(y => <option value={y} selected={y === year}>{y}</option>)
+          years.map(y => <option key={y} value={y}>{y}</option>)
         }
       </select>
       <table className="recruits-table">
         <thead>
-          { headers }
+          <tr>
+            {headers}
+          </tr>
         </thead>
         <tbody>
           {
             recruits.map(rec => {
               return (
-                <tr>
+                <tr key={rec._id}>
                   <td>{`${rec.fname} ${rec.lname}`}</td>
                   <td>{rec.pos}</td>
                   <td>{`${rec.city}, ${rec.state}`}</td>

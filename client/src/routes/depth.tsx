@@ -4,13 +4,13 @@ import LocalStorageService from '../lib/local-storage-service';
 import { PlayerSlideOut } from '../components/PlayerSlideOut';
 import { DepthChart } from '../components/DepthChart';
 import { CSSTransitionGroup } from 'react-transition-group';
+import config from '../config';
 
 interface IDepthProps {
-  config: any;
   swapPlayers: Function;
 }
 
-export const Depth: FC<IDepthProps> = (props) => {
+export const Depth: FC<IDepthProps> = ({ swapPlayers }) => {
 
   const year = useRef(new Date().getFullYear());
   const [players, setPlayers] = useState([]);
@@ -65,7 +65,7 @@ export const Depth: FC<IDepthProps> = (props) => {
 
   return (
     <div className="main depth">
-      <h1>{year} {props.config.team} Football Depth Chart</h1>
+      <h1>{year.current} {config.team} Football Depth Chart</h1>
 
       <CSSTransitionGroup
         transitionName="slide-out"
@@ -86,7 +86,7 @@ export const Depth: FC<IDepthProps> = (props) => {
         selectedCallback={(player) => setShowPlayerSlideOut(player)}
         players={players}
         editable={false}
-        swapPlayers={props.swapPlayers}
+        swapPlayers={swapPlayers}
       />
     </div>
   );

@@ -4,7 +4,7 @@ kbd, .key {
   min-width: 1em;
   padding: .2em .3em;
   margin: 0 .2em;
-  font: normal .85em/1 $mainfont;
+  font: normal .85em/1 var(--mainfont);
   text-align: center;
   text-decoration: none;
   -moz-border-radius: .3em;

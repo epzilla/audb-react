@@ -79,7 +79,7 @@ hr {
 
 .slide-up-half-appear.slide-up-half-appear-active, .slide-up-half-enter.slide-up-half-enter-active {
   transform: translateY(0);
-  opacity 1;
+  opacity: 1;
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
 

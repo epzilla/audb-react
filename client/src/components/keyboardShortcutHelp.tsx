@@ -2,7 +2,7 @@ import React, { FC } from 'react';
 import { CSSTransitionGroup } from 'react-transition-group';
 
 interface IKSHProps {
-  show: () => void;
+  show: boolean;
   dismiss: () => void;
 }
 
