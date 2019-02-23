@@ -1,4 +1,4 @@
-import { FC, useRef, useEffect } from 'react';
+import React, { FC, useRef, useEffect } from 'react';
 import { createBrowserHistory } from 'history';
 const history = createBrowserHistory();
 

@@ -1,4 +1,4 @@
-import { Component, useState, FC, useEffect, useRef } from 'react';
+import React, { useState, FC, useEffect, useRef } from 'react';
 import Rest from '../lib/rest-service';
 import LocalStorageService from '../lib/local-storage-service';
 import { DepthChart } from '../components/DepthChart';
@@ -11,19 +11,19 @@ import { createBrowserHistory } from 'history';
 import config from '../config';
 
 const history = createBrowserHistory();
-const positions = ['QB', 'RB', 'FB', 'TE', 'WR', 'OL', 'DE', 'DT', 'LB', 'CB', 'S', 'K', 'P'];
+const positions: string[] = ['QB', 'RB', 'FB', 'TE', 'WR', 'OL', 'DE', 'DT', 'LB', 'CB', 'S', 'K', 'P'];
 const truePositions = [
   'QB', 'RB', 'FB', 'TE', 'WR2', 'WR9', 'Slot', 'LT', 'LG', 'C', 'RG', 'RT',
   'WDE', 'SDE', 'NG', 'DT', 'WLB', 'MLB', 'SLB', 'LCB', 'RCB', 'FS', 'SS', 'K', 'P'
 ];
-const states = [
+const states: string[] = [
   'AK', 'AL', 'AR', 'AS', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'GA', 'GU',
   'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN',
   'MO', 'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK',
   'OR', 'PA', 'PR', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VA', 'VI', 'VT', 'WA',
   'WI', 'WV', 'WY'
 ];
-const recTableHeaders = [
+const recTableHeaders: any[] = [
   { title: 'First', name: 'fname', type: 'text' },
   { title: 'Last', name: 'lname', type: 'text' },
   { name: 'pos', type: 'select', options: positions },
@@ -42,15 +42,16 @@ const recTableHeaders = [
 const d = new Date();
 const currentRecYear = d.getMonth() < 2 ? d.getFullYear() : d.getFullYear() + 1;
 const currentYear = d.getFullYear();
-const years = [];
+const years: number[] = [];
 for (let i = currentYear + 2; i >= config.firstSeason; i--) {
   years.push(i);
 }
-const recYears = [];
+const recYears: number[] = [];
 for (let i = currentRecYear + 2; i >= config.firstTrackedRecruitingSeason; i--) {
   recYears.push(i);
 }
-let conferences;
+let conferences: any;
+
 Rest.get('conferences').then(c => {
   conferences = c;
 });
@@ -63,19 +64,19 @@ export const AdminView: FC<IAdminViewProps> = (props) => {
   if (!props.user) {
     history.push('/');
   }
-  const [players, setPlayers] = useState({});
-  const [recruits, setRecruits] = useState([]);
-  const [games, setGames] = useState([]);
-  const [playerSlideOut, setPlayerSlideOut] = useState(null);
+  const [players, setPlayers] = useState<any>({});
+  const [recruits, setRecruits] = useState<any[]>([]);
+  const [games, setGames] = useState<any[]>([]);
+  const [playerSlideOut, setPlayerSlideOut] = useState('');
   const [scheduleYear, setScheduleYear] = useState(currentYear);
   const [recYear, setRecYear] = useState(currentRecYear);
-  const [opponentOptions, setOpponentOptions] = useState([]);
-  const [locationOptions, setLocationOptions] = useState([]);
-  const [gameTableHeaders, setGameTableHeaders] = useState([]);
-  const [confirmAction, setConfirmAction] = useState(null);
+  const [opponentOptions, setOpponentOptions] = useState<any[]>([]);
+  const [locationOptions, setLocationOptions] = useState<any[]>([]);
+  const [gameTableHeaders, setGameTableHeaders] = useState<any[]>([]);
+  const [confirmAction, setConfirmAction] = useState('');
   const [confirmModal, setConfirmModal] = useState(false);
-  const [confirmText, setConfirmText] = useState(null);
-  const refreshCallback = useRef<Function>(null);
+  const [confirmText, setConfirmText] = useState('');
+  const refreshCallback = useRef<Function>(() => {});
 
   useEffect(() => {
     getPlayers();
@@ -87,7 +88,7 @@ export const AdminView: FC<IAdminViewProps> = (props) => {
       Rest.get('locations'),
       Rest.get('opponents')
     ]).then(([locOptions, oppOptions]) => {
-      let gtHeaders = [
+      let gtHeaders: any[] = [
         { name: 'game', type: 'text' },
         { name: 'date', type: 'date' },
         {
@@ -161,7 +162,7 @@ export const AdminView: FC<IAdminViewProps> = (props) => {
   };
 
   const dismissPlayerSlideOut = () => {
-    setPlayerSlideOut(null);
+    setPlayerSlideOut('');
   };
 
   const savePlayer = async (player) => {
@@ -326,16 +327,32 @@ export const AdminView: FC<IAdminViewProps> = (props) => {
   };
 
   const maybePerformAction = (action, confText) => {
-    let confAction = this[action];
-    setConfirmAction(confAction);
+    setConfirmAction(action);
     setConfirmText(confText);
     setConfirmModal(true);
   };
 
   const dismissConfirmModal = () => {
-    setConfirmAction(null);
-    setConfirmText(null);
+    setConfirmAction('');
+    setConfirmText('');
     setConfirmModal(false);
+  };
+
+  const doConfirmAction = () => {
+    switch (confirmAction) {
+      case 'fixStringNumbers':
+        fixStringNumbers();
+        return;
+      case 'advancePlayers':
+        advancePlayers();
+        return;
+      case 'enrollEarly':
+        enrollEarly();
+        return;
+      case 'enrollAll':
+        enrollAll();
+        return;
+    }
   };
 
   const advancePlayers = async () => {
@@ -371,19 +388,19 @@ export const AdminView: FC<IAdminViewProps> = (props) => {
     plSlideOut = <EditablePlayerSlideOut player={playerSlideOut} dismiss={dismissPlayerSlideOut} save={(player) => savePlayer(player)} />;
   }
 
-  if (confirmModal && typeof confirmAction === 'function') {
+  if (confirmModal && confirmAction) {
     confModal = (
       <div>
         <div className="modal-backdrop"></div>
         <div className="modal scale-in confirm-modal">
           <div className="modal-header">
             <h2>Are you sure you want to {confirmText}?</h2>
-            <button className="dismiss-btn" onClick={() => dismissConfirmModal()}>&times;</button>
+            <button className="dismiss-btn" onClick={dismissConfirmModal}>&times;</button>
           </div>
           <div className="modal-body flex">
             <div className="btn-container">
-              <button className="btn primary" onClick={() => confirmAction()}>Yes</button>
-              <button className="btn" onClick={() => dismissConfirmModal()}>No</button>
+              <button className="btn primary" onClick={doConfirmAction}>Yes</button>
+              <button className="btn" onClick={dismissConfirmModal}>No</button>
             </div>
           </div>
         </div>

@@ -1,31 +1,31 @@
-import { FC, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect, useContext } from 'react';
 import Rest from '../lib/rest-service';
 import LocalStorageService from '../lib/local-storage-service';
 import { gameIsInFuture } from '../lib/helpers';
 import config from '../config';
+import { UserContext } from '../components/App';
 
-const years = [];
+const years: number[] = [];
 const currentYear = new Date().getFullYear();
-const champs = config.championships;
-const warYears = config.warYears;
+const champs: any = config.championships;
+const warYears: number[] = config.warYears;
 
 for (let i = currentYear + 1; i >= config.firstSeason; i--) {
   years.push(i);
 }
 
 interface IYearlyProps {
-  user: any;
   toggleUserAttend: (gameId: string) => void;
 }
 
-export const YearlyResultsView: FC<IYearlyProps> = (props) => {
+export const YearlyResultsView: FC<IYearlyProps> = ({ toggleUserAttend }) => {
+  const user = useContext<any>(UserContext);
   const [year, setYear] = useState(currentYear);
-  const [results, setResults] = useState([]);
+  const [results, setResults] = useState<any[]>([]);
 
   let table;
-  let rows = [];
+  let rows: any[] = [];
   let record = { w: 0, l: 0, t: 0, confW: 0, confL: 0, confT: 0 };
-  let warYear;
 
   const onChange = (e) => {
     if (e && e.target.value) {
@@ -54,7 +54,7 @@ export const YearlyResultsView: FC<IYearlyProps> = (props) => {
 
   const toggleAttend = (gameId: string) => {
     Rest.post(`updateAttendance/${gameId}`).then(() => {
-      props.toggleUserAttend(gameId);
+      toggleUserAttend(gameId);
     });
   };
 
@@ -140,9 +140,9 @@ export const YearlyResultsView: FC<IYearlyProps> = (props) => {
       let dateParts = game.date.split('-');
       let date = `${dateParts[1]}/${dateParts[2]}`;
 
-      if (props.user && year <= currentYear) {
+      if (user && year <= currentYear) {
         if (!gameIsInFuture(game)) {
-          let didAttend = props.user.games.indexOf(game._id) !== -1;
+          let didAttend = user.games.indexOf(game._id) !== -1;
           attendCol = (
             <td>
               <button className={didAttend ? 'btn primary attended' : 'btn not-attended'} onClick={() => toggleAttend(game._id)}>
@@ -197,7 +197,7 @@ export const YearlyResultsView: FC<IYearlyProps> = (props) => {
           <th className="larger">
             <span>Location</span>
           </th>
-          {props.user && year <= currentYear ? <th className="center">Attended?</th> : null}
+          {user && year <= currentYear ? <th className="center">Attended?</th> : null}
         </thead>
         <tbody>
           {rows}
@@ -236,14 +236,12 @@ export const YearlyResultsView: FC<IYearlyProps> = (props) => {
     }
   }
 
-  if (warYears && warYears.indexOf(year) !== -1) {
-    warYear = (
-      <div className="jumbotron">
-        <h1>Allies 1 - Axis 0</h1>
-        <img src="/assets/images/Uncle-Sam.jpg" />
-      </div>
-    );
-  }
+  const warYear = warYears && warYears.indexOf(year) !== -1 ? (
+    <div className="jumbotron">
+      <h1>Allies 1 - Axis 0</h1>
+      <img src="/assets/images/Uncle-Sam.jpg" />
+    </div>
+  ) : null;
 
   return (
     <div className="main yearly">

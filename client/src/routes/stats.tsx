@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import Rest from '../lib/rest-service';
 import LocalStorageService from '../lib/local-storage-service';
 import { StatsTable } from '../components/StatsTable';
@@ -8,17 +8,17 @@ import { Toggle } from '../components/Toggle';
 import CSSTransitionGroup from 'react-transition-group';
 import config from '../config';
 
-const years = [];
-const reverseYears = [];
+const years: number[] = [];
+const reverseYears: number[] = [];
 const currentYear = new Date().getFullYear();
-const conferences = LocalStorageService.get('conferences') || [];
+const conferences: any[] = LocalStorageService.get('conferences') || [];
 for (let i = currentYear; i >= config.firstSeason; i--) {
   reverseYears.push(i);
   years.unshift(i);
 }
 
 const buildOptions = (confs) => {
-  let opts = {
+  let opts: any = {
     conferenceTeams: [],
     conferences: [],
     currentMembers: [],
@@ -56,18 +56,18 @@ interface IStatsViewProps {
 
 export const StatsView: FC<IStatsViewProps> = (props) => {
 
-    const [selectedTeams, setSelectedTeams] = useState([]);
+    const [selectedTeams, setSelectedTeams] = useState<string[]>([]);
     const [showSelectTeams, setShowSelectTeams] = useState(false);
     const [startYear, setStartYear] = useState(config.firstSeason);
     const [endYear, setEndYear] = useState(currentYear);
     const [games, setGames] = useState([]);
     const [options, setOptions] = useState<any>({});
-    const [homeAwayNeutral, setHomeAwayNeutral] = useState(undefined);
+    const [homeAwayNeutral, setHomeAwayNeutral] = useState('');
     const [minTeamScore, setMinTeamScore] = useState(20);
     const [minOppScore, setMinOppScore] = useState(20);
     const [maxTeamScore, setMaxTeamScore] = useState(20);
     const [maxOppScore, setMaxOppScore] = useState(20);
-    const [teamSearch, setTeamSearch] = useState(null);
+    const [teamSearch, setTeamSearch] = useState('');
     const [minTeamScoreEnabled, setMinTeamScoreEnabled] = useState(false);
     const [minOppScoreEnabled, setMinOppScoreEnabled] = useState(false);
     const [maxTeamScoreEnabled, setMaxTeamScoreEnabled] = useState(false);
@@ -136,12 +136,13 @@ export const StatsView: FC<IStatsViewProps> = (props) => {
   };
 
   const toggleGroup = (e) => {
-    let unchecked = e.target.parentElement.querySelectorAll('input[type=checkbox]:not(:checked)');
+    let unchecked = e.target.parentElement.querySelectorAll('input[type=checkbox]:not(:checked)') as NodeList;
     if (unchecked.length > 0) {
-      Array.from(unchecked).forEach((item: HTMLInputElement) => item.click());
+      Array.from(unchecked).forEach((item: Node) => (item as HTMLInputElement).click());
     }
     else {
-      Array.from(e.target.parentElement.querySelectorAll('input[type=checkbox]')).forEach((item: HTMLInputElement) => item.click());
+      let checked = e.target.parentElement.querySelectorAll('input[type=checkbox]') as NodeList;
+      Array.from(checked).forEach((item: Node) => (item as HTMLInputElement).click());
     }
   };
 
@@ -167,11 +168,11 @@ export const StatsView: FC<IStatsViewProps> = (props) => {
 
   const submit = (e) => {
     e.preventDefault();
-    let start= startYear;
+    let start = startYear;
     let end = endYear;
-    let teams = [];
-    let confs = [];
-    let curr = [];
+    let teams: string[] = [];
+    let confs: string[] = [];
+    let curr: string[] = [];
     let han = homeAwayNeutral;
 
     for (let i = 0; i < selectedTeams.length; i++) {
@@ -217,7 +218,7 @@ export const StatsView: FC<IStatsViewProps> = (props) => {
 
   const onHANChange = (han) => {
     if (homeAwayNeutral === han) {
-      setHomeAwayNeutral(undefined);
+      setHomeAwayNeutral('');
     }
     else {
       setHomeAwayNeutral(han);

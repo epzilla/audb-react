@@ -11,7 +11,7 @@ export interface IAutoCompleteProps {
 
 export const Autocomplete: FC<IAutoCompleteProps> = ({ onSelect, renderItems, options, value }) => {
 
-  const [matches, setMatches] = useState([]);
+  const [matches, setMatches] = useState<any[]>([]);
   const [currentValue, setCurrentValue] = useState(value || '');
 
   const onKeyUp = debounce(e => {
@@ -48,7 +48,7 @@ export const Autocomplete: FC<IAutoCompleteProps> = ({ onSelect, renderItems, op
     else if (e.key === 'Enter' || e.key === 'Tab') {
       let h = matches.find(m => m.highlighted);
       if (h) {
-        this.select(h);
+        onSelect(h);
       }
     }
     else if (e.key === 'Escape') {
@@ -73,7 +73,7 @@ export const Autocomplete: FC<IAutoCompleteProps> = ({ onSelect, renderItems, op
 
   const onBlur = (e) => {
     let value = e.target.value;
-    this.setState({ matches: [] });
+    setMatches([]);
     if (onSelect && value !== value) {
       onSelect({ val: value, fromBlur: true });
     }

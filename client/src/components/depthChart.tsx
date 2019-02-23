@@ -1,10 +1,10 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 
 interface IDepthChartProps {
   players: any;
   selectedCallback: Function;
   editable?: boolean;
-  swapPlayers?: Function;
+  swapPlayers: Function;
 }
 
 export const DepthChart: FC<IDepthChartProps> = (props) => {

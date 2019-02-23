@@ -1,23 +1,21 @@
-import React, { FC, useState, useRef } from 'react';
+import React, { FC, useState, useRef, useContext } from 'react';
 import Rest from '../lib/rest-service';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import LocalStorageService from '../lib/local-storage-service';
-import { createBrowserHistory } from 'history';
-
-const history = createBrowserHistory();
+import config from '../config';
+import { UserContext } from '../components/App';
 
 interface ILoginProps {
-  user: any;
-  config: any;
   returnUrl?: string;
   loginCb?: Function;
 }
 
 export const Login: FC<ILoginProps> = (props) => {
-  const { user, returnUrl, config, loginCb } = props;
+  const user = useContext(UserContext);
+  const { returnUrl, loginCb } = props;
   if (user) {
     let redirect = returnUrl ? returnUrl : '';
-    history.push(`/${redirect}`);
+    return <Redirect to={`/${redirect}`} />;
   }
 
   const emailRef = useRef<HTMLInputElement>(null);
@@ -27,8 +25,8 @@ export const Login: FC<ILoginProps> = (props) => {
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     Rest.post('session', {
-      email: emailRef.current.value,
-      password: passwordRef.current.value
+      email: emailRef && emailRef.current ? emailRef.current.value : '',
+      password: passwordRef && passwordRef.current ? passwordRef.current.value : ''
     }).then(user => {
       LocalStorageService.set('user', user);
       if (loginCb) {

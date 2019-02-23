@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import React, { FC } from 'react';
 import { LVP } from '../lib/interfaces';
 
 interface ISegmentedControlProps {

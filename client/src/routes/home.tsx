@@ -1,14 +1,14 @@
-import { FC, useMemo, useRef } from 'react';
+import React, { FC, useMemo, useRef, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import d3 from 'd3';
-import crossfilter from 'crossfilter';
-import { PieChart } from '../lib/react-dc/react-dc';
+// import d3 from 'd3';
+// import crossfilter from 'crossfilter';
+// import { PieChart } from '../lib/react-dc/react-dc';
 import { StatsTable } from '../components/StatsTable';
 import { Expandable } from '../components/Expandable';
 import { Avatar } from '../components/Avatar';
+import { UserContext } from '../components/App';
 
 interface IHomeProps {
-  user: any;
   games: any[];
   config: any;
 }
@@ -23,8 +23,8 @@ interface IAttendanceRecord {
   total: number;
 }
 
-export const Home: FC<IHomeProps> = ({ user, games, config }) => {
-
+export const Home: FC<IHomeProps> = ({ games, config }) => {
+  const user = useContext<any>(UserContext);
   if (!user) {
     let p1 = `This site was created to provide ${config.team} football fans with a quick way to look up
               all-time win/loss records, recruiting info, and the depth chart (with more features
@@ -90,46 +90,46 @@ export const Home: FC<IHomeProps> = ({ user, games, config }) => {
     return record;
   };
   let userRecord = useMemo<IAttendanceRecord>(() => calculateRecord(games), [games]);
-  let data = crossfilter(games);
-  let oppDimension = data.dimension(game => game.opponent);
-  let homeDimension = data.dimension(game => {
-    if (game.homeAwayNeutral === 'H') {
-      return 'Home';
-    }
-    else if (game.homeAwayNeutral === 'A') {
-      return 'Away';
-    }
-    else {
-      return 'Neutral';
-    }
-  });
-  let wlDimension = data.dimension(game => {
-    if (game.result === 'W') {
-      return 'Win';
-    } else if (game.result === 'L') {
-      return 'Loss';
-    } else {
-      return 'Tie';
-    }
-  });
-  let confDimension = data.dimension(game => {
-    if (game.conference === 'Pac-10') {
-      return 'Pac-12';
-    } else if (game.conference === 'Conference-USA') {
-      return 'Conf-USA';
-    } else if (game.conference === 'confGameWest') {
-      return 'confGame (West)';
-    } else if (game.conference === 'confGameEast') {
-      return 'confGame (East)';
-    } else {
-      return game.conference;
-    }
-  });
+  // let data = crossfilter(games);
+  // let oppDimension = data.dimension(game => game.opponent);
+  // let homeDimension = data.dimension(game => {
+  //   if (game.homeAwayNeutral === 'H') {
+  //     return 'Home';
+  //   }
+  //   else if (game.homeAwayNeutral === 'A') {
+  //     return 'Away';
+  //   }
+  //   else {
+  //     return 'Neutral';
+  //   }
+  // });
+  // let wlDimension = data.dimension(game => {
+  //   if (game.result === 'W') {
+  //     return 'Win';
+  //   } else if (game.result === 'L') {
+  //     return 'Loss';
+  //   } else {
+  //     return 'Tie';
+  //   }
+  // });
+  // let confDimension = data.dimension(game => {
+  //   if (game.conference === 'Pac-10') {
+  //     return 'Pac-12';
+  //   } else if (game.conference === 'Conference-USA') {
+  //     return 'Conf-USA';
+  //   } else if (game.conference === 'confGameWest') {
+  //     return 'confGame (West)';
+  //   } else if (game.conference === 'confGameEast') {
+  //     return 'confGame (East)';
+  //   } else {
+  //     return game.conference;
+  //   }
+  // });
 
-  let oppGroup = oppDimension.group();
-  let confGroup = confDimension.group();
-  let homeGroup = homeDimension.group();
-  let wlGroup = wlDimension.group();
+  // let oppGroup = oppDimension.group();
+  // let confGroup = confDimension.group();
+  // let homeGroup = homeDimension.group();
+  // let wlGroup = wlDimension.group();
 
   return (
     <div className="main home">
@@ -150,7 +150,7 @@ export const Home: FC<IHomeProps> = ({ user, games, config }) => {
         showRecord={false}
       />
       <hr />
-      <Expandable title="Charts" defaultCollapsed centered>
+      {/* <Expandable title="Charts" defaultCollapsed centered>
         <div className="row">
           <PieChart dimension={oppDimension} group={oppGroup} height={350} innerRadius={40} externalRadiusPadding={20} minAngleForLabel={0.2} />
         </div>
@@ -163,7 +163,7 @@ export const Home: FC<IHomeProps> = ({ user, games, config }) => {
         <div className="row">
           <PieChart dimension={homeDimension} group={homeGroup} height={350} innerRadius={40} externalRadiusPadding={20} minAngleForLabel={0.2} />
         </div>
-      </Expandable>
+      </Expandable> */}
     </div>
   );
 };

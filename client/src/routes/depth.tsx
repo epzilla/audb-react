@@ -1,4 +1,4 @@
-import { FC, useState, useRef} from 'react';
+import React, { FC, useState, useRef} from 'react';
 import Rest from '../lib/rest-service';
 import LocalStorageService from '../lib/local-storage-service';
 import { PlayerSlideOut } from '../components/PlayerSlideOut';
@@ -7,6 +7,7 @@ import { CSSTransitionGroup } from 'react-transition-group';
 
 interface IDepthProps {
   config: any;
+  swapPlayers: Function;
 }
 
 export const Depth: FC<IDepthProps> = (props) => {
@@ -85,6 +86,7 @@ export const Depth: FC<IDepthProps> = (props) => {
         selectedCallback={(player) => setShowPlayerSlideOut(player)}
         players={players}
         editable={false}
+        swapPlayers={props.swapPlayers}
       />
     </div>
   );

@@ -1,10 +1,10 @@
-import { FC, useState, useRef, useEffect } from 'react';
+import React, { FC, useState, useRef, useEffect } from 'react';
 import Rest from '../lib/rest-service';
 import LocalStorageService from '../lib/local-storage-service';
 import config from '../config';
 
-const years = [];
-const columns = [
+const years: number[] = [];
+const columns: any[] = [
   { field: 'lname', name: 'Name'},
   { field: 'pos', name: 'Pos'},
   { field: 'state', name: 'Hometown'},
@@ -17,7 +17,7 @@ const columns = [
   { field: 'avgRank', name: 'Rank', hideLarge: true, center: true}
 ];
 
-const maps = config.recruitMaps;
+const maps: { [yr: number]: string } = config.recruitMaps;
 
 let d = new Date();
 const currentYear = d.getMonth() < 2 ? d.getFullYear() : d.getFullYear() + 1;
@@ -29,7 +29,7 @@ for (let i = currentYear + 2; i >= firstTrackedClass; i--) {
 
 export const RecruitingView: FC = () => {
   const [year, setYear] = useState(currentYear);
-  const [recruits, setRecruits] = useState([]);
+  const [recruits, setRecruits] = useState<any[]>([]);
   const [sortCol, setSortCol] = useState('lname');
   const [sortAsc, setSortAsc] = useState(true);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -44,7 +44,7 @@ export const RecruitingView: FC = () => {
     if (target.nodeName !== 'INPUT') {
       switch (key) {
         case '/':
-          if (inputRef) {
+          if (inputRef && inputRef.current) {
             inputRef.current.focus();
           }
           break;
@@ -134,7 +134,7 @@ export const RecruitingView: FC = () => {
     }
   };
 
-  let headers = [];
+  let headers: any[] = [];
 
   recruits.sort((a, b) => {
     if (!a[sortCol] || !b[sortCol]) {

@@ -1,8 +1,9 @@
-import { FC, useState } from 'react';
+import React, { FC, useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Avatar } from './Avatar';
 import { createBrowserHistory } from 'history';
 import config from '../config';
+import { UserContext } from './App';
 
 const history = createBrowserHistory();
 
@@ -10,11 +11,11 @@ interface IHeaderProps {
   menu?: boolean;
   menuToggledCallback: (menu: boolean) => void;
   showKeyboardShortcuts: () => void;
-  user: any;
 }
 
-export const Header: FC<IHeaderProps> = ({ menu, menuToggledCallback, showKeyboardShortcuts, user }) => {
+export const Header: FC<IHeaderProps> = ({ menu, menuToggledCallback, showKeyboardShortcuts }) => {
 
+  const user = useContext<any>(UserContext);
   const [showMenu, setShowMenu] = useState(menu);
   const [kb, setKb] = useState(false);
   const [dropdownActive, setDropdownActive] = useState(false);

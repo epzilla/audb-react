@@ -1,4 +1,4 @@
-import { FC, Props, useState } from 'react';
+import React, { FC, Props, useState } from 'react';
 
 interface IExpandableProps extends Props<HTMLDivElement> {
   defaultCollapsed?: boolean;

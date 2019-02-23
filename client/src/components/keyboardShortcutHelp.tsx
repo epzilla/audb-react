@@ -1,5 +1,5 @@
-import { FC } from 'react';
-import CSSTransitionGroup from 'react-transition-group';
+import React, { FC } from 'react';
+import { CSSTransitionGroup } from 'react-transition-group';
 
 interface IKSHProps {
   show: () => void;
@@ -187,7 +187,7 @@ export const KeyboardShortcutHelp: FC<IKSHProps> = ({ show, dismiss }) => {
       transitionEnter={true}
       transitionEnterTimeout={200}
       transitionLeaveTimeout={200}>
-      { modal || null }
+      { modal || [] }
     </CSSTransitionGroup>
   );
 };

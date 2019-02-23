@@ -1,22 +1,23 @@
-import React, { FC, useState, useRef } from 'react';
+import React, { FC, useState, useRef, useContext } from 'react';
 import Rest from '../lib/rest-service';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { Avatar } from '../components/Avatar';
 import LocalStorageService from '../lib/local-storage-service';
 import { createBrowserHistory } from 'history';
+import { UserContext } from '../components/App';
 
 const history = createBrowserHistory();
 
 interface IProfileProps {
-  user: any;
+  avatarUpdatedCallback: Function;
 }
 
-export const Profile: FC<IProfileProps> = (props) => {
-  if (!props || !props.user) {
-    history.push('/');
+export const Profile: FC<IProfileProps> = ({ avatarUpdatedCallback }) => {
+  const user = useContext<any>(UserContext);
+  if (!user) {
+    return <Redirect to={'/'} />;
   }
 
-  const { user } = props;
   const emailRef = useRef<HTMLInputElement>(null);
   const oldpasswordRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -32,28 +33,33 @@ export const Profile: FC<IProfileProps> = (props) => {
     let editedUser = {
       ...user,
       avatar,
-      email: emailRef.current.value,
-      oldpassword: oldpasswordRef.current.value,
-      password: passwordRef.current.value,
-      password2: password2Ref.current.value
+      email: emailRef && emailRef.current ? emailRef.current.value : '',
+      oldpassword: oldpasswordRef && oldpasswordRef.current ? oldpasswordRef.current.value : '',
+      password: passwordRef && passwordRef.current ? passwordRef.current.value : '',
+      password2: password2Ref && password2Ref.current ? password2Ref.current.value : ''
     };
     Rest.put('users', editedUser).then(user => {
       delete editedUser['oldpassword'];
       delete editedUser['password'];
       delete editedUser['password2'];
       LocalStorageService.set('user', editedUser);
-      setPassword(null);
-      setPassword2(null);
-      setOldpassword(null);
+      setPassword('');
+      setPassword2('');
+      setOldpassword('');
     }).catch(err => {
       console.error(err);
     });
   };
 
+  const onUpdateAvatar = (avi) => {
+    setAvatar(avi);
+    avatarUpdatedCallback(avi);
+  }
+
   return (
     <div className="main user-profile">
       <div className="user-header-row">
-        <Avatar avatar={avatar} avatarUpdatedCallback={setAvatar} big editable />
+        <Avatar avatar={avatar} avatarUpdatedCallback={onUpdateAvatar} big editable />
         <h1>{user.name}</h1>
       </div>
       <form name="form" onSubmit={submit}>

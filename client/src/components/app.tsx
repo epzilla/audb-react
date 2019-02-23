@@ -1,161 +1,163 @@
-import { Component } from 'react';
-import { Router } from 'react-router';
-import Config from '../config';
-import Header from './Header';
-import Footer from './Footer';
-import Home from '../routes/home';
-import Stats from '../routes/stats';
-import Yearly from '../routes/yearly';
-import Depth from '../routes/depth';
-import Recruiting from '../routes/recruiting';
-import Admin from '../routes/admin';
-import Login from '../routes/login';
-import Logout from '../routes/logout';
-import Signup from '../routes/signup';
-import Profile from '../routes/profile';
-import NotSoSecretCode from './NotSoSecretCode';
-import GlobalKeyboardShortcuts from './GlobalKeyboardShortcuts';
-import KeyboardShortcutHelp from './KeyboardShortcutHelp';
+import React, { FC, createContext, useEffect, useState, useRef } from 'react';
+import { BrowserRouter, Route } from 'react-router-dom';
+import { Header } from './Header';
+import { Footer } from './Footer';
+import { Home } from '../routes/Home';
+import { StatsView } from '../routes/Stats';
+import { YearlyResultsView } from '../routes/Yearly';
+import { Depth } from '../routes/Depth';
+import { RecruitingView } from '../routes/Recruiting';
+import { AdminView } from '../routes/Admin';
+import { Login } from '../routes/Login';
+import { Logout } from '../routes/Logout';
+import { Signup } from '../routes/Signup';
+import { Profile } from '../routes/Profile';
+// import { NotSoSecretCode } from './NotSoSecretCode';
+import { GlobalKeyboardShortcuts } from './GlobalKeyboardShortcuts';
+import { KeyboardShortcutHelp }  from './KeyboardShortcutHelp';
 import Rest from '../lib/rest-service';
 import LocalStorageService from '../lib/local-storage-service';
+import config from '../config';
+import { useLocalStorage } from '../lib/hooks';
+import { createBrowserHistory } from 'history';
 
-export default class App extends Component {
-  constructor(props) {
-    super(props);
-    this.ls = LocalStorageService;
-    this.state = { user: this.ls.get('user'), menu: false, games: [], kb: false };
-    this.config = Config;
+const history = createBrowserHistory();
 
-    let conf = this.ls.get('config');
-    this.config = Config || conf;
-    if (Config && JSON.stringify(conf) !== JSON.stringify(Config)) {
-      this.ls.set('config', Config);
-    }
+export const UserContext = createContext(null);
+
+export const App: FC = (props) => {
+  // state = { user: ls.get('user'), menu: false, games: [], kb: false };
+  let conf = LocalStorageService.get('config');
+  const configuration = config || conf;
+  if (config && JSON.stringify(conf) !== JSON.stringify(config)) {
+    LocalStorageService.set('config', config);
   }
 
-  componentDidMount() {
+  const [user, setUser] = useLocalStorage('user', null);
+  const [games, setGames] = useState([]);
+  const [menu, setMenu] = useState(false);
+  const [showKbShortcuts, setShowKbShortcuts] = useState(false);
+  const url = useRef('');
+
+  useEffect(() => {
     // Set CSS Custom Properties
-    if (this.config && this.config.themeProperties) {
-      Object.keys(this.config.themeProperties).forEach(key => {
-        document.body.style.setProperty(`--${key}`, this.config.themeProperties[key]);
+    if (config && config.themeProperties) {
+      Object.keys(config.themeProperties).forEach(key => {
+        document.body.style.setProperty(`--${key}`, config.themeProperties[key]);
       });
     }
 
-    Rest.get('users/me').then(user => {
-      if (JSON.stringify(user) !== JSON.stringify(this.state.user)) {
-        this.setState({ user: user });
-        this.ls.set('user', user);
+    Rest.get('users/me').then(u => {
+      if (JSON.stringify(u) !== JSON.stringify(u)) {
+        setUser(u);
       }
 
-      Rest.get(`gamesByUser/${user._id}`).then(games => this.setState({ games }));
-    }).catch(e => {
-      this.setState({ user: null });
+      return Rest.get(`gamesByUser/${user._id}`);
+    })
+    .then(g => setGames(g))
+    .catch(e => {
+      setUser(null);
     });
-  }
+  }, []);
 
   /**
    *  Gets fired when the route changes.
    *  @param {Object} event    "change" event from [react-router](http://git.io/react-router)
    *  @param {string} event.url  The newly routed URL
    */
-  handleRoute = e => {
+  const handleRoute = (e) => {
     if ((e.previous && e.previous.indexOf('login') === -1 && e.url.indexOf('login') !== -1) || (e.previous && e.previous.indexOf('logout') === -1 && e.url.indexOf('logout') !== -1)) {
-      this.currentUrl = `${e.url}${this.currentUrl}`;
-      route(this.currentUrl);
+      url.current = `${e.url}${url.current}`;
+      history.push(url.current);
     } else {
-      this.currentUrl = e.url;
+      url.current = e.url;
     }
-    this.setState({ menu: false});
+    setMenu(false);
   };
 
-  onLogin = (user) => {
-    this.setState({ user });
-    this.ls.set('user', user);
+  const onLogin = (u) => {
+    setUser(u);
   };
 
-  onLogout = (returnUrl) => {
-    this.setState({ user: null });
-    this.ls.delete('user');
+  const onLogout = (returnUrl) => {
+    setUser(null);
     if (returnUrl) {
-      this.currentUrl = returnUrl;
-      route(returnUrl);
+      url.current = returnUrl;
+      history.push(returnUrl);
     }
   };
 
-  toggleUserAttend = (gameId) => {
-    let gameIndex = this.state.user.games.indexOf(gameId);
-    let user = this.state.user;
+  const toggleUserAttend = (gameId) => {
+    let editedUser = { ...user };
+    let gameIndex = editedUser.games.indexOf(gameId);
     if (gameIndex === -1) {
-      user.games.push(gameId);
+      editedUser.games.push(gameId);
     }
     else {
-      user.games.splice(gameIndex, 1);
+      editedUser.games.splice(gameIndex, 1);
     }
 
-    this.setState({ user });
+    setUser(editedUser);
   };
 
-  menuToggledCallback = (menu) => {
-    this.setState({ menu });
+  const menuToggledCallback = (m) => {
+    setMenu(m);
   };
 
-  hideKeyboardShortcuts = () => {
-    this.setState({ kb: false });
+  const hideKeyboardShortcuts = () => {
+    setShowKbShortcuts(false);
   };
 
-  showKeyboardShortcuts = () => {
-    this.setState({ kb: true });
+  const showKeyboardShortcuts = () => {
+    setShowKbShortcuts(true);
   };
 
-  toggleKeyboardShortcuts = () => {
-    this.setState({ kb: !this.state.kb });
+  const toggleKeyboardShortcuts = () => {
+    setShowKbShortcuts(!showKbShortcuts);
   };
 
-  escapeKeyCallback = () => {
-    if (this.state.kb) {
-      this.hideKeyboardShortcuts();
+  const escapeKeyCallback = () => {
+    if (showKbShortcuts) {
+      hideKeyboardShortcuts();
     }
   };
 
-  updateAvatar = (av) => {
-    let user = this.state.user;
-    user.avatar = av;
-    this.ls.set('user', user);
-    this.setState({ user });
+  const updateAvatar = (av) => {
+    let editedUser = { ...user };
+    editedUser.avatar = av;
+    setUser(editedUser);
   };
 
-  render() {
-    return (
+  return (
+    <UserContext.Provider value={user}>
+    <BrowserRouter>
       <div id="app">
         <Header
-          user={this.state.user}
-          menu={this.state.menu}
-          config={this.config}
-          menuToggledCallback={(e) => this.menuToggledCallback(e)}
-          showKeyboardShortcuts={() => this.showKeyboardShortcuts()}
+          menu={menu}
+          menuToggledCallback={(e) => menuToggledCallback(e)}
+          showKeyboardShortcuts={() => showKeyboardShortcuts()}
         />
-        <Router onChange={(e) => this.handleRoute(e)}>
-          <Home path="/" config={this.config} user={this.state.user} games={this.state.games} />
-          <Yearly path="/yearly" user={this.state.user} toggleUserAttend={this.toggleUserAttend} config={this.config} />
-          <Depth path="/depth" config={this.config} />
-          <Recruiting path="/recruiting" config={this.config} />
-          <Stats path="/stats" user={this.state.user} toggleUserAttend={this.toggleUserAttend} config={this.config} />
-          <Admin path="/admin" user={this.state.user} config={this.config} />
-          <Login path="/login/:returnUrl?" user={this.state.user} loginCb={(u) => this.onLogin(u)} config={this.config} />
-          <Logout path="/logout/:returnUrl?" config={this.config} />
-          <Signup path="/sign-up/:returnUrl?" user={this.state.user} loginCb={(u) => this.onLogin(u)} config={this.config} />
-          <Profile path="/profile" user={this.state.user} avatarUpdatedCallback={(av) => this.updateAvatar(av)} />
-        </Router>
-        <Footer config={this.config} />
-        <NotSoSecretCode config={this.config} menu={this.state.menu} />
+        <Route path="/" render={(props) => <Home games={games} config={config} />} />
+        <Route path="/yearly" render={(props) => <YearlyResultsView toggleUserAttend={toggleUserAttend} />} />
+        <Route path="/depth" component={Depth} />
+        <Route path="recruiting" component={RecruitingView} />
+        <Route path="stats" component={StatsView} />
+        <Route path="admin" component={AdminView} />
+        <Route path="/login/:returnUrl?" render={(props) => <Login loginCb={onLogin} {...props} />} />
+        <Route path="/logout/:returnUrl?" render={(props) => <Logout loginCb={onLogin} {...props} />} />
+        <Route path="/sign-up/:returnUrl?" render={(props) => <Signup loginCb={onLogin} {...props} />} />
+        <Route path="/profile" render={(props) => <Profile avatarUpdatedCallback={updateAvatar} />} />
+        <Footer config={config} />
+        {/* <NotSoSecretCode menu={menu} /> */}
         <GlobalKeyboardShortcuts
-          toggleKeyboardShortcuts={this.toggleKeyboardShortcuts}
-          escape={this.escapeKeyCallback}
+          toggleKeyboardShortcuts={toggleKeyboardShortcuts}
+          escape={escapeKeyCallback}
         />
-        <KeyboardShortcutHelp config={this.config} show={this.state.kb} dismiss={() => this.hideKeyboardShortcuts()} />
-        <audio preload id="highlight-sound" src={this.config.highlightSound} />
-        <audio preload id="secret-sound" src="/assets/secret.wav" />
+        <KeyboardShortcutHelp show={showKeyboardShortcuts} dismiss={hideKeyboardShortcuts} />
+        <audio preload="auto" id="highlight-sound" src={config.highlightSound} />
+        <audio preload="auto" id="secret-sound" src="/assets/secret.wav" />
       </div>
-    );
-  }
+    </BrowserRouter>
+    </UserContext.Provider>
+  );
 }

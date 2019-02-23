@@ -7,7 +7,11 @@ export default {
     prefixedKey = self.prefix.concat('-', key);
     if (window.localStorage && window.localStorage.getItem) {
       try {
-        return JSON.parse(window.localStorage.getItem(prefixedKey));
+        let item = window.localStorage.getItem(prefixedKey);
+        if (item) {
+          return JSON.parse(item);
+        }
+        return null;
       } catch (e) {
         return;
       }

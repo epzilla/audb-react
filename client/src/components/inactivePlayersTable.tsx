@@ -1,4 +1,4 @@
-import { FC, useState, useEffect } from 'react';
+import React, { FC, useState, useEffect } from 'react';
 import Rest from '../lib/rest-service';
 
 interface IIPTProps {
@@ -8,7 +8,7 @@ interface IIPTProps {
 
 export const InactivePlayersTable: FC<IIPTProps> = ({ playerReactivated, registerForRefresh }) => {
 
-  const [players, setPlayers] = useState([]);
+  const [players, setPlayers] = useState<any[]>([]);
   useEffect(() => {
     if (!players) {
       getPlayers();
