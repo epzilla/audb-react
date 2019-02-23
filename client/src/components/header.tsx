@@ -1,11 +1,19 @@
 import React, { FC, useState, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, LinkProps } from 'react-router-dom';
 import { Avatar } from './Avatar';
 import { createBrowserHistory } from 'history';
 import config from '../config';
 import { UserContext } from './App';
 
 const history = createBrowserHistory();
+
+const HeaderLink: FC<LinkProps> = (props) => (
+  <Link
+    className={history.location.pathname.startsWith(props.to as string) ? 'active' : ''}
+    {...props}>
+    {props.children}
+  </Link>
+);
 
 interface IHeaderProps {
   menu?: boolean;
@@ -14,7 +22,6 @@ interface IHeaderProps {
 }
 
 export const Header: FC<IHeaderProps> = ({ menu, menuToggledCallback, showKeyboardShortcuts }) => {
-
   const user = useContext<any>(UserContext);
   const [showMenu, setShowMenu] = useState(menu);
   const [kb, setKb] = useState(false);
@@ -88,13 +95,13 @@ export const Header: FC<IHeaderProps> = ({ menu, menuToggledCallback, showKeyboa
   return (
     <header className="header">
       <button className="btn menu-btn" onClick={toggleMenu}>Menu</button>
-      <Link className="flex-pull-right" to="/" tabIndex={1}><h1>{config.siteName}</h1></Link>
+      <HeaderLink className="flex-pull-right" to="/" tabIndex={1}><h1>{config.siteName}</h1></HeaderLink>
       <nav className={showMenu ? 'show' : 'hide'}>
-        <Link to="/stats" tabIndex={2}>Stats</Link>
-        <Link to="/yearly" tabIndex={3}>Yearly Results</Link>
-        <Link to="/depth" tabIndex={4}>Depth Chart</Link>
-        <Link to="/recruiting" tabIndex={5}>Recruiting</Link>
-        {user && user.role && user.role === 'admin' ? <Link to="/admin" tabIndex={6}>Admin</Link> : null}
+        <HeaderLink to="/stats" tabIndex={2} >Stats</HeaderLink>
+        <HeaderLink to="/yearly" tabIndex={3}>Yearly Results</HeaderLink>
+        <HeaderLink to="/depth" tabIndex={4}>Depth Chart</HeaderLink>
+        <HeaderLink to="/recruiting" tabIndex={5} >Recruiting</HeaderLink>
+        {user && user.role && user.role === 'admin' ? <HeaderLink to="/admin" tabIndex={6}>Admin</HeaderLink> : null}
         {rightBlock}
         {user ? <Link className="smaller order-last-smaller" to="/logout">Logout</Link> : null}
       </nav>

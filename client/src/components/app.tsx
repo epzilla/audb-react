@@ -1,5 +1,6 @@
-import React, { FC, createContext, useEffect, useState, useRef } from 'react';
-import { BrowserRouter, Route } from 'react-router-dom';
+import React, { Component } from 'react';
+import { BrowserRouter, Redirect, Route } from 'react-router-dom';
+import Config from '../config';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { Home } from '../routes/Home';
@@ -14,150 +15,145 @@ import { Signup } from '../routes/Signup';
 import { Profile } from '../routes/Profile';
 // import { NotSoSecretCode } from './NotSoSecretCode';
 import { GlobalKeyboardShortcuts } from './GlobalKeyboardShortcuts';
-import { KeyboardShortcutHelp }  from './KeyboardShortcutHelp';
+import { KeyboardShortcutHelp } from './KeyboardShortcutHelp';
 import Rest from '../lib/rest-service';
 import LocalStorageService from '../lib/local-storage-service';
 import config from '../config';
-import { useLocalStorage } from '../lib/hooks';
-import { createBrowserHistory } from 'history';
+import '../style/index.scss';
 
-const history = createBrowserHistory();
+export const UserContext = React.createContext(null);
 
-export const UserContext = createContext(null);
+interface IAppState {
+  user: any;
+  menu: boolean;
+  games: any[];
+  kb: boolean;
+}
 
-export const App: FC = (props) => {
-  // state = { user: ls.get('user'), menu: false, games: [], kb: false };
-  let conf = LocalStorageService.get('config');
-  const configuration = config || conf;
-  if (config && JSON.stringify(conf) !== JSON.stringify(config)) {
-    LocalStorageService.set('config', config);
+export default class App extends Component<{}, IAppState> {
+  constructor(props) {
+    super(props);
+    this.ls = LocalStorageService;
+    this.state = { user: this.ls.get('user'), menu: false, games: [], kb: false };
+    this.config = Config;
+
+    let conf = this.ls.get('config');
+    this.config = Config || conf;
+    if (Config && JSON.stringify(conf) !== JSON.stringify(Config)) {
+      this.ls.set('config', Config);
+    }
   }
 
-  const [user, setUser] = useLocalStorage('user', null);
-  const [games, setGames] = useState([]);
-  const [menu, setMenu] = useState(false);
-  const [showKbShortcuts, setShowKbShortcuts] = useState(false);
-  const url = useRef('');
+  private ls: any;
+  private config: any;
+  private currentUrl: string;
 
-  useEffect(() => {
+  componentDidMount() {
     // Set CSS Custom Properties
-    if (config && config.themeProperties) {
-      Object.keys(config.themeProperties).forEach(key => {
-        document.body.style.setProperty(`--${key}`, config.themeProperties[key]);
+    if (this.config && this.config.themeProperties) {
+      Object.keys(this.config.themeProperties).forEach(key => {
+        document.body.style.setProperty(`--${key}`, this.config.themeProperties[key]);
       });
     }
 
-    Rest.get('users/me').then(u => {
-      if (JSON.stringify(u) !== JSON.stringify(u)) {
-        setUser(u);
+    Rest.get('users/me').then(user => {
+      if (JSON.stringify(user) !== JSON.stringify(this.state.user)) {
+        this.setState({ user: user });
+        this.ls.set('user', user);
       }
 
-      return Rest.get(`gamesByUser/${user._id}`);
-    })
-    .then(g => setGames(g))
-    .catch(e => {
-      setUser(null);
+      Rest.get(`gamesByUser/${user._id}`).then(games => this.setState({ games }));
+    }).catch(e => {
+      this.setState({ user: null });
     });
-  }, []);
+  }
 
-  /**
-   *  Gets fired when the route changes.
-   *  @param {Object} event    "change" event from [react-router](http://git.io/react-router)
-   *  @param {string} event.url  The newly routed URL
-   */
-  const handleRoute = (e) => {
-    if ((e.previous && e.previous.indexOf('login') === -1 && e.url.indexOf('login') !== -1) || (e.previous && e.previous.indexOf('logout') === -1 && e.url.indexOf('logout') !== -1)) {
-      url.current = `${e.url}${url.current}`;
-      history.push(url.current);
-    } else {
-      url.current = e.url;
-    }
-    setMenu(false);
+  onLogin = (user) => {
+    this.setState({ user });
+    this.ls.set('user', user);
   };
 
-  const onLogin = (u) => {
-    setUser(u);
-  };
-
-  const onLogout = (returnUrl) => {
-    setUser(null);
+  onLogout = (returnUrl) => {
+    this.setState({ user: null });
+    this.ls.delete('user');
     if (returnUrl) {
-      url.current = returnUrl;
-      history.push(returnUrl);
+      this.currentUrl = returnUrl;
+      return <Redirect to={returnUrl} />;
     }
   };
 
-  const toggleUserAttend = (gameId) => {
-    let editedUser = { ...user };
-    let gameIndex = editedUser.games.indexOf(gameId);
+  toggleUserAttend = (gameId) => {
+    let gameIndex = this.state.user.games.indexOf(gameId);
+    let user = this.state.user;
     if (gameIndex === -1) {
-      editedUser.games.push(gameId);
+      user.games.push(gameId);
     }
     else {
-      editedUser.games.splice(gameIndex, 1);
+      user.games.splice(gameIndex, 1);
     }
 
-    setUser(editedUser);
+    this.setState({ user });
   };
 
-  const menuToggledCallback = (m) => {
-    setMenu(m);
+  menuToggledCallback = (menu) => {
+    this.setState({ menu });
   };
 
-  const hideKeyboardShortcuts = () => {
-    setShowKbShortcuts(false);
+  hideKeyboardShortcuts = () => {
+    this.setState({ kb: false });
   };
 
-  const showKeyboardShortcuts = () => {
-    setShowKbShortcuts(true);
+  showKeyboardShortcuts = () => {
+    this.setState({ kb: true });
   };
 
-  const toggleKeyboardShortcuts = () => {
-    setShowKbShortcuts(!showKbShortcuts);
+  toggleKeyboardShortcuts = () => {
+    this.setState({ kb: !this.state.kb });
   };
 
-  const escapeKeyCallback = () => {
-    if (showKbShortcuts) {
-      hideKeyboardShortcuts();
+  escapeKeyCallback = () => {
+    if (this.state.kb) {
+      this.hideKeyboardShortcuts();
     }
   };
 
-  const updateAvatar = (av) => {
-    let editedUser = { ...user };
-    editedUser.avatar = av;
-    setUser(editedUser);
+  updateAvatar = (av) => {
+    let user = this.state.user;
+    user.avatar = av;
+    this.ls.set('user', user);
+    this.setState({ user });
   };
 
-  return (
-    <UserContext.Provider value={user}>
-    <BrowserRouter>
-      <div id="app">
-        <Header
-          menu={menu}
-          menuToggledCallback={menuToggledCallback}
-          showKeyboardShortcuts={showKeyboardShortcuts}
-        />
-        <Route path="/" exact render={(props) => <Home games={games} config={config} />} />
-        <Route path="/yearly" render={(props) => <YearlyResultsView toggleUserAttend={toggleUserAttend} />} />
-        <Route path="/depth" component={Depth} />
-        <Route path="/recruiting" component={RecruitingView} />
-        <Route path="/stats" component={StatsView} />
-        <Route path="/admin" component={AdminView} />
-        <Route path="/login/:returnUrl?" render={(props) => <Login loginCb={onLogin} {...props} />} />
-        <Route path="/logout/:returnUrl?" render={(props) => <Logout loginCb={onLogin} {...props} />} />
-        <Route path="/sign-up/:returnUrl?" render={(props) => <Signup loginCb={onLogin} {...props} />} />
-        <Route path="/profile" render={(props) => <Profile avatarUpdatedCallback={updateAvatar} />} />
-        <Footer config={config} />
-        {/* <NotSoSecretCode menu={menu} /> */}
-        <GlobalKeyboardShortcuts
-          toggleKeyboardShortcuts={toggleKeyboardShortcuts}
-          escape={escapeKeyCallback}
-        />
-        <KeyboardShortcutHelp show={showKbShortcuts} dismiss={hideKeyboardShortcuts} />
-        <audio preload="auto" id="highlight-sound" src={config.highlightSound} />
-        <audio preload="auto" id="secret-sound" src="/assets/secret.wav" />
-      </div>
-    </BrowserRouter>
-    </UserContext.Provider>
-  );
+  render() {
+    return (
+      <UserContext.Provider value={this.state.user}>
+          <div id="app">
+            <Header
+              menu={this.state.menu}
+              menuToggledCallback={this.menuToggledCallback}
+              showKeyboardShortcuts={this.showKeyboardShortcuts}
+            />
+            <Route path="/" exact render={(props) => <Home games={this.state.games} config={config} />} />
+            <Route path="/yearly" render={(props) => <YearlyResultsView toggleUserAttend={this.toggleUserAttend} />} />
+            <Route path="/depth" component={Depth} />
+            <Route path="/recruiting" component={RecruitingView} />
+            <Route path="/stats" component={StatsView} />
+            <Route path="/admin" component={AdminView} />
+            <Route path="/login/:returnUrl?" render={(props) => <Login loginCb={this.onLogin} {...props} />} />
+            <Route path="/logout/:returnUrl?" render={(props) => <Logout loginCb={this.onLogin} {...props} />} />
+            <Route path="/sign-up/:returnUrl?" render={(props) => <Signup loginCb={this.onLogin} {...props} />} />
+            <Route path="/profile" render={(props) => <Profile avatarUpdatedCallback={this.updateAvatar} />} />
+            <Footer config={config} />
+            {/* <NotSoSecretCode menu={menu} /> */}
+            <GlobalKeyboardShortcuts
+              toggleKeyboardShortcuts={this.toggleKeyboardShortcuts}
+              escape={this.escapeKeyCallback}
+            />
+            <KeyboardShortcutHelp show={this.state.kb} dismiss={this.hideKeyboardShortcuts} />
+            <audio preload="auto" id="highlight-sound" src={config.highlightSound} />
+            <audio preload="auto" id="secret-sound" src="/assets/secret.wav" />
+          </div>
+      </UserContext.Provider>
+    );
+  }
 }

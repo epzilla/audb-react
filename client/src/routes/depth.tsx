@@ -70,7 +70,7 @@ export const Depth: FC<IDepthProps> = ({ swapPlayers }) => {
       <CSSTransitionGroup
         transitionName="slide-out"
         transitionAppear={true}
-        trasnsitionLeave={true}
+        transitionLeave={true}
         transitionEnter={true}
         transitionEnterTimeout={0}
         transitionLeaveTimeout={0}>

@@ -415,7 +415,7 @@ export const AdminView: FC<IAdminViewProps> = (props) => {
       <CSSTransitionGroup
         transitionName="slide-out"
         transitionAppear={true}
-        trasnsitionLeave={true}
+        transitionLeave={true}
         transitionEnter={true}
         transitionEnterTimeout={0}
         transitionLeaveTimeout={0}>
@@ -500,7 +500,7 @@ export const AdminView: FC<IAdminViewProps> = (props) => {
         className="full-width"
         transitionName="modal-pop-in"
         transitionAppear={true}
-        trasnsitionLeave={true}
+        transitionLeave={true}
         transitionEnter={true}
         transitionEnterTimeout={150}
         transitionLeaveTimeout={150}>

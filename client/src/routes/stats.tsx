@@ -5,7 +5,7 @@ import { StatsTable } from '../components/StatsTable';
 import { Expandable } from '../components/Expandable';
 import { SegmentedControl } from '../components/SegmentedControl';
 import { Toggle } from '../components/Toggle';
-import CSSTransitionGroup from 'react-transition-group';
+import { CSSTransitionGroup } from 'react-transition-group';
 import config from '../config';
 
 const years: number[] = [];
@@ -119,7 +119,7 @@ export const StatsView: FC<IStatsViewProps> = (props) => {
     setEndYear(parseInt(e.target.value));
   };
 
-  const onTeamSearchChange = (e) => {
+  const onTeamSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTeamSearch(e.target.value);
   };
 
@@ -260,9 +260,9 @@ export const StatsView: FC<IStatsViewProps> = (props) => {
   useEffect(() => {
     Rest.get('conferences').then(confs => {
       if (JSON.stringify(confs) !== JSON.stringify(conferences)) {
-        setOptions(buildOptions(confs));
         LocalStorageService.set('conferences', confs);
       }
+      setOptions(buildOptions(confs));
     });
 
     document.addEventListener('keyup', onKeyUp);
@@ -272,35 +272,32 @@ export const StatsView: FC<IStatsViewProps> = (props) => {
       document.removeEventListener('keyup', onKeyUp);
       document.removeEventListener('keydown', onKeyDown, true);
     }
-  });
+  }, []);
 
   let classes = submitted ? 'main stats submitted' : 'main stats';
-  let submittedSection;
   let selectTeamsModal;
 
-  if (submitted) {
-    submittedSection = (
-      <div className="show-submitted full-width">
-        <h3 className="no-margin-top color-primary">vs.</h3>
-        <h2 className="color-primary">{selectedTeams.join(', ')}</h2>
-        <h3 className="align-center no-margin-top color-tertiary">{`${startYear} – ${endYear}`}</h3>
-        <div className="form-group flex-col">
-          <button className="btn big center" onClick={() => reset()}>Back</button>
-        </div>
-        { games.length > 0 ? <hr /> : null }
-        { games.length > 0 ?
-          <StatsTable
-            games={games}
-            user={props.user}
-            currentYear={currentYear}
-            config={config}
-            toggleUserAttend={toggleAttend}
-            showRecord={true}
-          /> : <h2 className="align-center">No results Found 😞</h2>
-        }
+  const submittedSection = submitted ? (
+    <div className="show-submitted full-width">
+      <h3 className="no-margin-top color-primary">vs.</h3>
+      <h2 className="color-primary">{selectedTeams.join(', ')}</h2>
+      <h3 className="align-center no-margin-top color-tertiary">{`${startYear} – ${endYear}`}</h3>
+      <div className="form-group flex-col">
+        <button className="btn big center" onClick={() => reset()}>Back</button>
       </div>
-    );
-  }
+      { games.length > 0 ? <hr /> : null }
+      { games.length > 0 ?
+        <StatsTable
+          games={games}
+          user={props.user}
+          currentYear={currentYear}
+          config={config}
+          toggleUserAttend={toggleAttend}
+          showRecord={true}
+        /> : <h2 className="align-center">No results Found 😞</h2>
+      }
+    </div>
+  ) : [];
 
   if (showSelectTeams) {
     let lowerSearch = teamSearch ? teamSearch.toLowerCase() : null;
@@ -308,8 +305,8 @@ export const StatsView: FC<IStatsViewProps> = (props) => {
       let options = c.options.filter(opt => opt.label.toLowerCase() !== config.team.toLowerCase() && (!lowerSearch || opt.label.toLowerCase().indexOf(lowerSearch) !== -1))
         .map(opt => {
           return (
-            <li className="item">
-              <input type="checkbox" checked={selectedTeams.indexOf(opt.value) !== -1} id={`team-${opt.value}`} onClick={() => toggleTeam(opt.value)} />
+            <li key={opt.value} className="item">
+              <input type="checkbox" checked={selectedTeams.indexOf(opt.value) !== -1} id={`team-${opt.value}`} onChange={() => toggleTeam(opt.value)} />
               <label htmlFor={`team-${opt.value}`}>
                 <div className={`team-logo logo-${ opt.value.replace(/\s+/g, '').replace(/&/g, '').replace(/\./g, '') }`}></div>
                 <span>{ opt.label }</span>
@@ -320,7 +317,7 @@ export const StatsView: FC<IStatsViewProps> = (props) => {
 
       if (options.length > 0) {
         return (
-          <ul className="group">
+          <ul key={c.label} className="group">
             <li className="item header" onClick={(e) => toggleGroup(e)}>{c.label}</li>
             { options }
           </ul>
@@ -331,7 +328,7 @@ export const StatsView: FC<IStatsViewProps> = (props) => {
     let conferenceOptions = options.conferences.filter(opt => !lowerSearch || opt.label.toLowerCase().indexOf(lowerSearch) !== -1)
       .map(opt => {
         return (
-          <li className="item">
+          <li key={opt.value} className="item">
             <input type="checkbox" id={`conf-${opt.value}`} onClick={() => toggleTeam(opt.value)} />
             <label htmlFor={`conf-${opt.value}`}>{ opt.label }</label>
           </li>
@@ -341,7 +338,7 @@ export const StatsView: FC<IStatsViewProps> = (props) => {
     let currentOptions = options.conferences.filter(opt => !lowerSearch || opt.label.toLowerCase().indexOf(lowerSearch) !== -1)
       .map(opt => {
         return (
-          <li className="item">
+          <li key={opt.value} className="item">
             <input type="checkbox" id={`conf-${opt.value}`} onClick={() => toggleTeam(opt.value)} />
             <label htmlFor={`conf-${opt.value}`}>{ opt.label }</label>
           </li>
@@ -351,7 +348,7 @@ export const StatsView: FC<IStatsViewProps> = (props) => {
     let defunctOptions = options.defunct.filter(opt => !lowerSearch || opt.label.toLowerCase().indexOf(lowerSearch) !== -1)
       .map(opt => {
         return (
-          <li className="item">
+          <li key={opt.value} className="item">
             <input type="checkbox" id={`conf-${opt.value}`} onClick={() => toggleTeam(opt.value)} />
             <label htmlFor={`conf-${opt.value}`}>{ opt.label }</label>
           </li>
@@ -402,7 +399,7 @@ export const StatsView: FC<IStatsViewProps> = (props) => {
           <div className="modal-header">
             <h2>Select Teams</h2>
             <div className="search-wrapper">
-              <input type="search" autoFocus value={teamSearch} onKeyUp={onTeamSearchChange} />
+              <input type="search" autoFocus value={teamSearch} onChange={onTeamSearchChange} />
             </div>
             <button className="dismiss-btn" onClick={closeSelectTeams}>&times;</button>
           </div>
@@ -425,6 +422,9 @@ export const StatsView: FC<IStatsViewProps> = (props) => {
         </div>
       </div>
     );
+  }
+  else {
+    selectTeamsModal = [];
   }
 
   let selectTeamBtn, selectedTeamNames;
@@ -454,17 +454,17 @@ export const StatsView: FC<IStatsViewProps> = (props) => {
       </div>
       <div className="form-group flex-col hide-submitted">
         <label>From</label>
-        <select className="big-select margin-bottom-1rem" onChange={onStartYearChange}>
+        <select className="big-select margin-bottom-1rem" onChange={onStartYearChange} value={startYear}>
           {
-            years.map(y => <option value={y} selected={y === startYear}>{y}</option>)
+            years.map(y => <option key={y} value={y}>{y}</option>)
           }
         </select>
       </div>
       <div className="form-group flex-col hide-submitted">
         <label>To</label>
-        <select className="big-select margin-bottom-1rem" onChange={onEndYearChange}>
+        <select className="big-select margin-bottom-1rem" onChange={onEndYearChange} value={endYear}>
           {
-            reverseYears.map(y => <option value={y} selected={y === endYear}>{y}</option>)
+            reverseYears.map(y => <option key={y} value={y}>{y}</option>)
           }
         </select>
       </div>
@@ -522,8 +522,9 @@ export const StatsView: FC<IStatsViewProps> = (props) => {
         className="full-width"
         transitionName="slide-up-half"
         transitionAppear={true}
-        trasnsitionLeave={true}
+        transitionLeave={true}
         transitionEnter={true}
+        transitionAppearTimeout={0}
         transitionEnterTimeout={0}
         transitionLeaveTimeout={0}>
         { submittedSection }
@@ -532,8 +533,9 @@ export const StatsView: FC<IStatsViewProps> = (props) => {
         className="full-width"
         transitionName="modal-pop-in"
         transitionAppear={true}
-        trasnsitionLeave={true}
+        transitionLeave={true}
         transitionEnter={true}
+        transitionAppearTimeout={150}
         transitionEnterTimeout={150}
         transitionLeaveTimeout={150}>
         { selectTeamsModal }

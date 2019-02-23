@@ -26,6 +26,7 @@ export const SegmentedControl: FC<ISegmentedControlProps> = ({ options, onChange
       {
         options.map(opt => (
           <button
+            key={opt.value}
             className={`btn${opt.value === value ? ' selected' : ''}`}
             onClick={(e) => onClick(opt.value)}>
             {opt.label}
