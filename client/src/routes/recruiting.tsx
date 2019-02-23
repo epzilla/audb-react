@@ -35,10 +35,10 @@ export const RecruitingView: FC = () => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    getRecruits(currentYear);
+    getRecruits(year);
     document.addEventListener('keyup', onKeyUp);
     return () => document.removeEventListener('keyup', onKeyUp);
-  }, []);
+  }, [year]);
 
   const onKeyUp = ({ key, target, shiftKey }) => {
     if (target.nodeName !== 'INPUT') {
@@ -49,10 +49,10 @@ export const RecruitingView: FC = () => {
           }
           break;
         case 'ArrowLeft':
-          prev();
+          prev(year);
           break;
         case 'ArrowRight':
-          next();
+          next(year);
           break;
         case 'n':
           sortByCol('lname');
@@ -90,7 +90,6 @@ export const RecruitingView: FC = () => {
 
   const changeYear = (y) => {
     setYear(y);
-    getRecruits(year);
   };
 
   const getRecruits = (recruitYear) => {
@@ -120,15 +119,15 @@ export const RecruitingView: FC = () => {
     }
   };
 
-  const next = () => {
-    let nextYear = year + 1;
+  const next = (yr) => {
+    let nextYear = yr + 1;
     if (nextYear <= currentYear + 2) {
       changeYear(nextYear);
     }
   };
 
-  const prev = () => {
-    let prevYear = year - 1;
+  const prev = (yr) => {
+    let prevYear = yr - 1;
     if (prevYear >= config.firstSeason) {
       changeYear(prevYear);
     }

@@ -58,15 +58,15 @@ export const YearlyResultsView: FC<IYearlyProps> = ({ toggleUserAttend }) => {
     });
   };
 
-  const next = () => {
-    let nexyYear = year + 1;
+  const next = (yr) => {
+    let nexyYear = yr + 1;
     if (nexyYear <= currentYear + 1) {
       changeYear(nexyYear);
     }
   };
 
-  const prev = () => {
-    let prevYear = year - 1;
+  const prev = (yr) => {
+    let prevYear = yr - 1;
     if (prevYear >= config.firstSeason) {
       changeYear(prevYear);
     }
@@ -87,10 +87,10 @@ export const YearlyResultsView: FC<IYearlyProps> = ({ toggleUserAttend }) => {
     if (target.nodeName !== 'INPUT') {
       switch (key) {
         case 'ArrowLeft':
-          prev();
+          prev(year);
           break;
         case 'ArrowRight':
-          next();
+          next(year);
           break;
       }
     }
@@ -103,7 +103,7 @@ export const YearlyResultsView: FC<IYearlyProps> = ({ toggleUserAttend }) => {
       document.removeEventListener('keydown', onKeyDown, true);
       document.removeEventListener('keyup', onKeyUp);
     }
-  }, []);
+  }, [year]);
 
   if (warYears.indexOf(year) === -1) {
     rows = results.map((game, i) => {
@@ -157,7 +157,7 @@ export const YearlyResultsView: FC<IYearlyProps> = ({ toggleUserAttend }) => {
       }
 
       return (
-        <tr className={rowClass} tabIndex={i + 11}>
+        <tr key={game._id} className={rowClass} tabIndex={i + 11}>
           <td>{date}</td>
           <td className="center">{resText}</td>
           <td className="logo-td center">
@@ -247,9 +247,9 @@ export const YearlyResultsView: FC<IYearlyProps> = ({ toggleUserAttend }) => {
     <div className="main yearly">
       <h1>{year} {config.team} Football results</h1>
       <div className="flex-center flex-col">
-        <select className="big-select margin-bottom-1rem" onChange={onChange}>
+        <select className="big-select margin-bottom-1rem" onChange={onChange} value={year}>
           {
-            years.map(y => <option value={y} selected={y === year}>{y}</option>)
+            years.map(y => <option key={y} value={y}>{y}</option>)
           }
         </select>
         {table}

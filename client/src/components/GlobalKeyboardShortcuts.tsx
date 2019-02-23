@@ -1,6 +1,5 @@
-import React, { FC, useRef, useEffect } from 'react';
-import { createBrowserHistory } from 'history';
-const history = createBrowserHistory();
+import React, { FC, useRef, useEffect, useState } from 'react';
+import { Redirect } from 'react-router-dom';
 
 interface IGlobalKeyboardShortcutsProps {
   toggleKeyboardShortcuts: () => void;
@@ -10,6 +9,7 @@ interface IGlobalKeyboardShortcutsProps {
 export const GlobalKeyboardShortcuts: FC<IGlobalKeyboardShortcutsProps> = (props) => {
 
   const goTo = useRef(false);
+  const [redirectTo, setRedirectTo] = useState('');
 
   useEffect(() => {
     document.addEventListener('keyup', onKeyUp);
@@ -17,6 +17,12 @@ export const GlobalKeyboardShortcuts: FC<IGlobalKeyboardShortcutsProps> = (props
       document.removeEventListener('keyup', onKeyUp);
     }
   });
+
+  useEffect(() => {
+    if (redirectTo === window.location.pathname) {
+      setRedirectTo('');
+    }
+  }, [redirectTo]);
 
   const onKeyUp = (e) => {
     if (e.target.nodeName !== 'INPUT') {
@@ -33,48 +39,52 @@ export const GlobalKeyboardShortcuts: FC<IGlobalKeyboardShortcutsProps> = (props
         case 'h':
           if (goTo.current) {
             goTo.current = false;
-            history.push('/');
+            setRedirectTo('/');
           }
           break;
         case 's':
           if (goTo.current) {
             goTo.current = false;
-            history.push('/stats');
+            setRedirectTo('/stats');
           }
           break;
         case 'y':
           if (goTo.current) {
             goTo.current = false;
-            history.push('/yearly');
+            setRedirectTo('/yearly');
           }
           break;
         case 'd':
           if (goTo.current) {
             goTo.current = false;
-            history.push('/depth');
+            setRedirectTo('/depth');
           }
           break;
         case 'r':
           if (goTo.current) {
             goTo.current = false;
-            history.push('/recruiting');
+            setRedirectTo('/recruiting');
           }
           break;
         case 'p':
           if (goTo.current) {
             goTo.current = false;
-            history.push('/profile');
+            setRedirectTo('/profile');
           }
         case 'a':
           if (goTo.current) {
             goTo.current = false;
-            history.push('/admin');
+            setRedirectTo('/admin');
           }
         default:
           goTo.current = false;
       }
     }
   };
+
+  if (redirectTo && redirectTo !== window.location.pathname) {
+    return <Redirect to={redirectTo} />;
+  }
 
   return null;
 };
