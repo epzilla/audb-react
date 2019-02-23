@@ -137,13 +137,32 @@ export const StatsView: FC<IStatsViewProps> = (props) => {
 
   const toggleGroup = (e) => {
     let unchecked = e.target.parentElement.querySelectorAll('input[type=checkbox]:not(:checked)') as NodeList;
+    let teams = [...selectedTeams];
     if (unchecked.length > 0) {
-      Array.from(unchecked).forEach((item: Node) => (item as HTMLInputElement).click());
+      Array.from(unchecked).forEach((item: Node) => {
+        let team = item as HTMLElement;
+        let id = team.id.slice(5);
+        let i = teams.indexOf(id);
+        if (i === -1) {
+          teams.push(id);
+        }
+        else {
+          teams.splice(i, 1);
+        }
+      });
     }
     else {
       let checked = e.target.parentElement.querySelectorAll('input[type=checkbox]') as NodeList;
-      Array.from(checked).forEach((item: Node) => (item as HTMLInputElement).click());
+      Array.from(checked).forEach((item: Node) => {
+        let team = item as HTMLElement;
+        let id = team.id.slice(5);
+        let i = teams.indexOf(id);
+        if (i !== -1) {
+          teams.splice(i, 1);
+        }
+      });
     }
+    setSelectedTeams(teams);
   };
 
   const toggleAttend = (id) => {
@@ -357,26 +376,23 @@ export const StatsView: FC<IStatsViewProps> = (props) => {
 
     let otherCategories = (
       <div className="lists">
-        { conferenceOptions.length > 0 ?
+        { conferenceOptions.length > 0 &&
           <ul className="group">
             <li className="item header">Conference (at time of game)</li>
             { conferenceOptions }
           </ul>
-          : null
         }
-        { currentOptions.length > 0 ?
+        { currentOptions.length > 0 &&
           <ul className="group">
             <li className="item header">Conference (current)</li>
             { currentOptions }
           </ul>
-          : null
         }
-        { defunctOptions.length > 0 ?
+        { defunctOptions.length > 0 &&
           <ul className="group">
             <li className="item header">Defunct Conferences</li>
             { defunctOptions }
           </ul>
-          : null
         }
         <ul className="group">
           <li className="item header">Other</li>

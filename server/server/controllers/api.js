@@ -403,23 +403,23 @@ exports.statsByopponent = function (req, res, next) {
 
 var filterResults = function (input, query) {
   var results = input;
-  if (_.has(query, 'minTeamScore')) {
+  if (!_.isNil(query['minTeamScore'])) {
     results = _.filter(results, r => r.teamScore >= query.minTeamScore);
   }
 
-  if (_.has(query, 'maxTeamScore')) {
+  if (!_.isNil(query['maxTeamScore'])) {
     results = _.filter(results, r => r.teamScore < query.maxTeamScore);
   }
 
-  if (_.has(query, 'minOppScore')) {
+  if (!_.isNil(query['minOppScore'])) {
     results = _.filter(results, r => r.opScore >= query.minOppScore);
   }
 
-  if (_.has(query, 'maxOppScore')) {
+  if (!_.isNil(query['maxOppScore'])) {
     results = _.filter(results, r => r.opScore < query.maxOppScore);
   }
 
-  if (_.has(query, 'homeAwayNeutral')) {
+  if (!_.isNil(query['homeAwayNeutral'])) {
     results = _.filter(results, r => r.homeAwayNeutral === query.homeAwayNeutral);
   }
 
