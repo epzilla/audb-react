@@ -65,19 +65,19 @@ export const Profile: FC<IProfileProps> = ({ avatarUpdatedCallback }) => {
       <form name="form" onSubmit={submit}>
         <div className="form-group">
           <label>Email</label>
-          <input ref={emailRef} type="email" name="email" autoFocus className="form-control" value={email} />
+          <input ref={emailRef} type="email" name="email" autoFocus className="form-control" defaultValue={email} />
         </div>
         <div className="form-group">
           <label>Old Password</label>
-          <input ref={oldpasswordRef} type="password" name="oldpassword" className="form-control" value={oldpassword} />
+          <input ref={oldpasswordRef} type="password" name="oldpassword" className="form-control" defaultValue={oldpassword} />
         </div>
         <div className="form-group">
           <label>New Password</label>
-          <input ref={passwordRef} type="password" name="password" className="form-control" value={password} />
+          <input ref={passwordRef} type="password" name="password" className="form-control" defaultValue={password} />
         </div>
         <div className="form-group">
           <label>Re-type New Password</label>
-          <input ref={password2Ref} type="password" name="password2" className="form-control" value={password2} />
+          <input ref={password2Ref} type="password" name="password2" className="form-control" defaultValue={password2} />
         </div>          <button type="submit" className="btn primary"> Update </button>
       </form>
     </div>

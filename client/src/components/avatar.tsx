@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useState, useRef } from 'react';
 import Rest from '../lib/rest-service';
 
 interface IAvatarProps {
@@ -10,12 +10,12 @@ interface IAvatarProps {
 
 export const Avatar: FC<IAvatarProps> = ({ avatar, avatarUpdatedCallback, big, editable }) => {
 
-  const [newAvatar, setNewAvatar] = useState(avatar);
+  const [newAvatar, setNewAvatar] = useState('');
+  const input = useRef<HTMLInputElement>(null);
 
   const edit = e => {
-    let input = e.currentTarget.querySelector('input');
-    if (input) {
-      input.click();
+    if (input && input.current) {
+      input.current.click();
     }
   };
 
@@ -67,7 +67,6 @@ export const Avatar: FC<IAvatarProps> = ({ avatar, avatarUpdatedCallback, big, e
 
     if (editable) {
       classes += ' editable';
-      let avi = newAvatar || avatar;
 
       return (
         <div className={ classes }
@@ -77,9 +76,9 @@ export const Avatar: FC<IAvatarProps> = ({ avatar, avatarUpdatedCallback, big, e
           onDragLeave={handleDragleave}
           onDrop={handleDrop}
           style={{
-            backgroundImage: avi ? `url(${avi})` : `url(/images/default_avatar.png)`
+            backgroundImage: newAvatar ? `url(${newAvatar})` : (avatar ? `url(${avatar})` : `url(/images/default_avatar.png)`)
           }}>
-          <input type="file" value={newAvatar} onChange={processChange} />
+          <input type="file" ref={input} value={newAvatar} onChange={processChange} />
           <div className="edit-overlay">
             <span>Click to change</span>
           </div>

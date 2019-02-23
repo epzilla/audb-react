@@ -183,21 +183,23 @@ export const YearlyResultsView: FC<IYearlyProps> = ({ toggleUserAttend }) => {
     table = (
       <table className="capped-size-table">
         <thead>
-          <th>Date</th>
-          <th className="center">W/L</th>
-          <th className="center"></th>
-          <th>
-            <span className="larger">Opponent</span>
-            <span className="smaller">Team</span>
-          </th>
-          <th>Score</th>
-          <th className="center smaller">
-            <span className="smaller">Loc</span>
-          </th>
-          <th className="larger">
-            <span>Location</span>
-          </th>
-          {user && year <= currentYear ? <th className="center">Attended?</th> : null}
+          <tr>
+            <th>Date</th>
+            <th className="center">W/L</th>
+            <th className="center"></th>
+            <th>
+              <span className="larger">Opponent</span>
+              <span className="smaller">Team</span>
+            </th>
+            <th>Score</th>
+            <th className="center smaller">
+              <span className="smaller">Loc</span>
+            </th>
+            <th className="larger">
+              <span>Location</span>
+            </th>
+            {user && year <= currentYear ? <th className="center">Attended?</th> : null}
+          </tr>
         </thead>
         <tbody>
           {rows}
