@@ -1,20 +1,11 @@
 import React, { FC, useState, useContext } from 'react';
-import { Link, LinkProps } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { Avatar } from './Avatar';
 import { createBrowserHistory } from 'history';
 import config from '../config';
 import { UserContext } from './App';
 
 const history = createBrowserHistory();
-
-const HeaderLink: FC<LinkProps> = (props) => {
-  return (
-  <Link
-    className={window.location.pathname.startsWith(props.to as string) ? 'active' : ''}
-    {...props}>
-    {props.children}
-  </Link>
-)};
 
 interface IHeaderProps {
   menu?: boolean;
@@ -96,13 +87,13 @@ export const Header: FC<IHeaderProps> = ({ menu, menuToggledCallback, showKeyboa
   return (
     <header className="header">
       <button className="btn menu-btn" onClick={toggleMenu}>Menu</button>
-      <HeaderLink className="flex-pull-right" to="/" tabIndex={1}><h1>{config.siteName}</h1></HeaderLink>
+      <NavLink className="flex-pull-right" to="/" tabIndex={1}><h1>{config.siteName}</h1></NavLink>
       <nav className={showMenu ? 'show' : 'hide'}>
-        <HeaderLink to="/stats" tabIndex={2} >Stats</HeaderLink>
-        <HeaderLink to="/yearly" tabIndex={3}>Yearly Results</HeaderLink>
-        <HeaderLink to="/depth" tabIndex={4}>Depth Chart</HeaderLink>
-        <HeaderLink to="/recruiting" tabIndex={5} >Recruiting</HeaderLink>
-        {user && user.role && user.role === 'admin' ? <HeaderLink to="/admin" tabIndex={6}>Admin</HeaderLink> : null}
+        <NavLink to="/stats" tabIndex={2} >Stats</NavLink>
+        <NavLink to="/yearly" tabIndex={3}>Yearly Results</NavLink>
+        <NavLink to="/depth" tabIndex={4}>Depth Chart</NavLink>
+        <NavLink to="/recruiting" tabIndex={5} >Recruiting</NavLink>
+        {user && user.role && user.role === 'admin' ? <NavLink to="/admin" tabIndex={6}>Admin</NavLink> : null}
         {rightBlock}
         {user ? <Link className="smaller order-last-smaller" to="/logout">Logout</Link> : null}
       </nav>
