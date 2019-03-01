@@ -40,9 +40,11 @@ export const InactivePlayersTable: FC<IIPTProps> = ({ playerReactivated, registe
   return (
     <table className="capped-size-table">
       <thead>
-        <th>Name</th>
-        <th>Pos</th>
-        <th>Reactivate</th>
+        <tr>
+          <th>Name</th>
+          <th>Pos</th>
+          <th>Reactivate</th>
+        </tr>
       </thead>
       <tbody>
         {
@@ -51,7 +53,7 @@ export const InactivePlayersTable: FC<IIPTProps> = ({ playerReactivated, registe
               <td>{pl.fname} {pl.lname}</td>
               <td>{pl.pos}</td>
               <td>
-                <button className="btn" onClick={() => reactivate(pl)}>+</button>
+                <button className="btn plus-btn" onClick={() => reactivate(pl)}>+</button>
               </td>
             </tr>
           ))

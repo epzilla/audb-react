@@ -74,7 +74,7 @@ export const EditablePlayerSlideOut: FC<IEPSOProps> = ({ player, dismiss, save }
             <label>Position</label>
             <select onChange={setValue} name="truePos">
               {
-                positions.map(p => <option value={p} selected={editedPlayer.truePos === p}>{p}</option>)
+                positions.map(p => <option key={p} value={p} selected={editedPlayer.truePos === p}>{p}</option>)
               }
             </select>
           </div>
@@ -93,7 +93,7 @@ export const EditablePlayerSlideOut: FC<IEPSOProps> = ({ player, dismiss, save }
           <label>State</label>
           <select onChange={setValue} name="state">
             {
-              states.map(s => <option value={s} selected={editedPlayer.state === s}>{s}</option>)
+              states.map(s => <option key={s} value={s} selected={editedPlayer.state === s}>{s}</option>)
             }
           </select>
         </div>
@@ -101,7 +101,7 @@ export const EditablePlayerSlideOut: FC<IEPSOProps> = ({ player, dismiss, save }
           <label>Year</label>
           <select onChange={setValue} name="year">
             {
-              years.map(y => <option value={y} selected={editedPlayer.year === y}>{y}</option>)
+              years.map(y => <option key={y} value={y} selected={editedPlayer.year === y}>{y}</option>)
             }
           </select>
         </div>

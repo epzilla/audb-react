@@ -99,7 +99,7 @@ export const AdminView: FC<IAdminViewProps> = (props) => {
             return items.map(item => {
               let classes = item.highlighted ? 'option highlighted' : 'option';
               return (
-                <li className={classes} onClick={() => {}} data-item={item}>
+                <li key={item.val} className={classes} onClick={() => {}} data-item={item}>
                   <div className={`team-logo logo-${item.val.replace(/\s+/g, '').replace(/&/g, '').replace(/\./g, '')}`}></div>
                   {item.val}
                 </li>
@@ -117,7 +117,7 @@ export const AdminView: FC<IAdminViewProps> = (props) => {
             return items.map(item => {
               let classes = item.highlighted ? 'option highlighted' : 'option';
               return (
-                <li className={classes} onClick={() => {}} data-item={item}>
+                <li key={item.val} className={classes} onClick={() => {}} data-item={item}>
                   {item.val}
                 </li>
               );
@@ -446,7 +446,7 @@ export const AdminView: FC<IAdminViewProps> = (props) => {
         <select onChange={setSchedYear}>
           {
             years.map(y => {
-              return <option value={y} selected={y === scheduleYear}>{y}</option>
+              return <option key={y} value={y} selected={y === scheduleYear}>{y}</option>
             })
           }
         </select>
@@ -468,7 +468,7 @@ export const AdminView: FC<IAdminViewProps> = (props) => {
         <select onChange={setRecruitsYear}>
           {
             recYears.map(y => {
-              return <option value={y} selected={y === recYear}>{y}</option>
+              return <option key={y} value={y} selected={y === recYear}>{y}</option>
             })
           }
         </select>

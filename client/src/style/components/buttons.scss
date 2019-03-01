@@ -73,4 +73,8 @@
   &.not-attended {
     color: var(--disabledColor);
   }
+
+  &.plus-btn {
+    line-height: 0;
+  }
 }

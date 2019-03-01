@@ -76,7 +76,7 @@ export const EditableTable: FC<IEditableTableProps> = (props) => {
   };
 
   let headerRowCells = headers.map(header => {
-    return <th className="title-case">{header.title ? header.title : header.name}</th>;
+    return <th key={header.title} className="title-case">{header.title ? header.title : header.name}</th>;
   });
 
   if (deleteButton) {
@@ -87,11 +87,11 @@ export const EditableTable: FC<IEditableTableProps> = (props) => {
     let cells = headers.map(header => {
       if (header.type === 'select') {
         return (
-          <td className="align-center">
+          <td key={header.title + 'td' + i} className="align-center">
             <select onChange={(e) => onChange(e, i, header)}>
               {
                 header.options.map(opt => {
-                  return <option value={opt} selected={opt === d[header.name]}>{opt}</option>
+                  return <option key={opt} value={opt} selected={opt === d[header.name]}>{opt}</option>
                 })
               }
             </select>
@@ -127,7 +127,9 @@ export const EditableTable: FC<IEditableTableProps> = (props) => {
   return (
     <table className={`editable-table ${className ? className : ''}`}>
       <thead>
-        {headerRowCells}
+        <tr>
+          {headerRowCells}
+        </tr>
       </thead>
       <tbody>
         {rows}

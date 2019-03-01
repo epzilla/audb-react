@@ -105,6 +105,10 @@ export const YearlyResultsView: FC<IYearlyProps> = ({ toggleUserAttend }) => {
     }
   }, [year]);
 
+  useEffect(() => {
+    getResultsByYear(year);
+  }, [year]);
+
   if (warYears.indexOf(year) === -1) {
     rows = results.map((game, i) => {
       let resText;
