@@ -49,6 +49,9 @@ export default class App extends Component<{}, IAppState> {
   private currentUrl: string;
 
   componentDidMount() {
+    // Set document title
+    document.title = config.siteName;
+
     // Set CSS Custom Properties
     if (this.config && this.config.themeProperties) {
       Object.keys(this.config.themeProperties).forEach(key => {

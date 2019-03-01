@@ -1,4 +1,4 @@
-import React, { FC, useState, useRef} from 'react';
+import React, { FC, useState, useRef, useEffect} from 'react';
 import Rest from '../lib/rest-service';
 import LocalStorageService from '../lib/local-storage-service';
 import { PlayerSlideOut } from '../components/PlayerSlideOut';
@@ -30,38 +30,9 @@ export const Depth: FC<IDepthProps> = ({ swapPlayers }) => {
     });
   };
 
-  let playerSlideOut;
-  let playerEls = {
-    QB: [],
-    RB: [],
-    FB: [],
-    TE: [],
-    LT: [],
-    LG: [],
-    C: [],
-    RG: [],
-    RT: [],
-    Slot: [],
-    WR2: [],
-    WR9: [],
-    DT: [],
-    NG: [],
-    SDE: [],
-    WDE: [],
-    WLB: [],
-    SLB: [],
-    MLB: [],
-    SS: [],
-    FS: [],
-    LCB: [],
-    RCB: [],
-    P: [],
-    K: []
-  };
-
-  if (players && playerSlideOut) {
-    playerSlideOut = <PlayerSlideOut player={playerSlideOut} dismiss={() => setShowPlayerSlideOut(null)} />;
-  }
+  useEffect(() => {
+    getPlayers();
+  }, []);
 
   return (
     <div className="main depth">
@@ -76,14 +47,14 @@ export const Depth: FC<IDepthProps> = ({ swapPlayers }) => {
         transitionLeaveTimeout={0}>
         {
           players && showPlayerSlideOut ?
-          <PlayerSlideOut player={playerSlideOut} dismiss={() => setShowPlayerSlideOut(null)} />
+          <PlayerSlideOut player={showPlayerSlideOut} dismiss={() => setShowPlayerSlideOut(null)} />
           :
           []
         }
       </CSSTransitionGroup>
 
       <DepthChart
-        selectedCallback={(player) => setShowPlayerSlideOut(player)}
+        selectedCallback={setShowPlayerSlideOut}
         players={players}
         editable={false}
         swapPlayers={swapPlayers}

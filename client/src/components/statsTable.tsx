@@ -73,7 +73,7 @@ export const StatsTable: FC<IStatsTableProps> = (props) => {
     }
 
     return (
-      <tr tabIndex={i + 11} className={rowClass}>
+      <tr key={game._id} tabIndex={i + 11} className={rowClass}>
         <td>
           <span className="larger">{ `${dateParts[1]}/${dateParts[2]}/${dateParts[0]}` }</span>
           <span className="smaller">{dateParts[0]}</span>

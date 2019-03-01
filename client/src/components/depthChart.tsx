@@ -68,21 +68,20 @@ export const DepthChart: FC<IDepthChartProps> = (props) => {
   let playerEls = {};
 
   Object.keys(players).forEach(posGroup => {
-    playerEls[posGroup] = players[posGroup].map(player => {
-      return (
-        <div id={player._id}
-          className={!!player.retStart ? 'player-row returning-starter' : 'player-row'}
-          draggable={editable}
-          onDragStart={handleDragstart}
-          data-order={player.stringNum}
-          data-player={JSON.stringify(player)}
-        >
-          <p>
-            <a onClick={() => selectedCallback(player)}>{`${player.num} - ${player.fname} ${player.lname} - ${player.year}`}</a>
-          </p>
-        </div>
-      );
-    });
+    playerEls[posGroup] = players[posGroup].map(player => (
+      <div id={player._id}
+        key={player._id}
+        className={!!player.retStart ? 'player-row returning-starter' : 'player-row'}
+        draggable={editable}
+        onDragStart={handleDragstart}
+        data-order={player.stringNum}
+        data-player={JSON.stringify(player)}
+      >
+        <p>
+          <a onClick={() => selectedCallback(player)}>{`${player.num} - ${player.fname} ${player.lname} - ${player.year}`}</a>
+        </p>
+      </div>
+    ));
   });
 
   return (
