@@ -1,43 +1,130 @@
-import React, { useState, FC, useEffect, useRef } from 'react';
-import Rest from '../lib/rest-service';
-import LocalStorageService from '../lib/local-storage-service';
-import { DepthChart } from '../components/DepthChart';
-import { EditablePlayerSlideOut } from '../components/EditablePlayerSlideout';
-import { InactivePlayersTable } from '../components/InactivePlayersTable';
-import { Expandable } from '../components/Expandable';
-import { EditableTable } from '../components/EditableTable';
-import { CSSTransitionGroup } from 'react-transition-group';
-import { createBrowserHistory } from 'history';
-import config from '../config';
+import React, { useState, FC, useEffect, useRef } from "react";
+import Rest from "../lib/rest-service";
+import LocalStorageService from "../lib/local-storage-service";
+import { DepthChart } from "../components/DepthChart";
+import { EditablePlayerSlideOut } from "../components/EditablePlayerSlideout";
+import { InactivePlayersTable } from "../components/InactivePlayersTable";
+import { Expandable } from "../components/Expandable";
+import { EditableTable } from "../components/EditableTable";
+import { CSSTransitionGroup } from "react-transition-group";
+import { createBrowserHistory } from "history";
+import config from "../config";
 
 const history = createBrowserHistory();
-const positions: string[] = ['QB', 'RB', 'FB', 'TE', 'WR', 'OL', 'DE', 'DT', 'LB', 'CB', 'S', 'K', 'P'];
+const positions: string[] = [
+  "QB",
+  "RB",
+  "FB",
+  "TE",
+  "WR",
+  "OL",
+  "DE",
+  "DT",
+  "LB",
+  "CB",
+  "S",
+  "K",
+  "P"
+];
 const truePositions = [
-  'QB', 'RB', 'FB', 'TE', 'WR2', 'WR9', 'Slot', 'LT', 'LG', 'C', 'RG', 'RT',
-  'WDE', 'SDE', 'NG', 'DT', 'WLB', 'MLB', 'SLB', 'LCB', 'RCB', 'FS', 'SS', 'K', 'P'
+  "QB",
+  "RB",
+  "FB",
+  "TE",
+  "WR2",
+  "WR9",
+  "Slot",
+  "LT",
+  "LG",
+  "C",
+  "RG",
+  "RT",
+  "WDE",
+  "SDE",
+  "NG",
+  "DT",
+  "WLB",
+  "MLB",
+  "SLB",
+  "LCB",
+  "RCB",
+  "FS",
+  "SS",
+  "K",
+  "P"
 ];
 const states: string[] = [
-  'AK', 'AL', 'AR', 'AS', 'AZ', 'CA', 'CO', 'CT', 'DC', 'DE', 'FL', 'GA', 'GU',
-  'HI', 'IA', 'ID', 'IL', 'IN', 'KS', 'KY', 'LA', 'MA', 'MD', 'ME', 'MI', 'MN',
-  'MO', 'MS', 'MT', 'NC', 'ND', 'NE', 'NH', 'NJ', 'NM', 'NV', 'NY', 'OH', 'OK',
-  'OR', 'PA', 'PR', 'RI', 'SC', 'SD', 'TN', 'TX', 'UT', 'VA', 'VI', 'VT', 'WA',
-  'WI', 'WV', 'WY'
+  "AK",
+  "AL",
+  "AR",
+  "AS",
+  "AZ",
+  "CA",
+  "CO",
+  "CT",
+  "DC",
+  "DE",
+  "FL",
+  "GA",
+  "GU",
+  "HI",
+  "IA",
+  "ID",
+  "IL",
+  "IN",
+  "KS",
+  "KY",
+  "LA",
+  "MA",
+  "MD",
+  "ME",
+  "MI",
+  "MN",
+  "MO",
+  "MS",
+  "MT",
+  "NC",
+  "ND",
+  "NE",
+  "NH",
+  "NJ",
+  "NM",
+  "NV",
+  "NY",
+  "OH",
+  "OK",
+  "OR",
+  "PA",
+  "PR",
+  "RI",
+  "SC",
+  "SD",
+  "TN",
+  "TX",
+  "UT",
+  "VA",
+  "VI",
+  "VT",
+  "WA",
+  "WI",
+  "WV",
+  "WY"
 ];
 const recTableHeaders: any[] = [
-  { title: 'First', name: 'fname', type: 'text' },
-  { title: 'Last', name: 'lname', type: 'text' },
-  { name: 'pos', type: 'select', options: positions },
-  { name: 'truePos', title: 'Sub-Pos', type: 'select', options: truePositions },
-  { name: 'city', type: 'text' },
-  { name: 'state', type: 'select', options: states },
-  { title: 'HS', name: 'hs', type: 'text' },
-  { name: 'height', type: 'text' },
-  { name: 'weight', type: 'number' },
-  { title: 'R Rank', name: 'rivalsRank', type: 'number' },
-  { title: 'R *', name: 'rivalsStars', type: 'number' },
-  { title: 'S Rank', name: 'scoutRank', type: 'number' },
-  { title: 'S *', name: 'scoutStars', type: 'number' },
-  { title: 'Early?', name: 'earlyEnrollee', type: 'boolean' }
+  { title: "First", name: "fname", type: "text" },
+  { title: "Last", name: "lname", type: "text" },
+  { name: "pos", type: "select", options: positions },
+  { name: "truePos", title: "Sub-Pos", type: "select", options: truePositions },
+  { name: "city", type: "text" },
+  { name: "state", type: "select", options: states },
+  { title: "HS", name: "hs", type: "text" },
+  { name: "height", type: "text" },
+  { name: "weight", type: "number" },
+  { title: "R Rank", name: "rivalsRank", type: "number" },
+  { title: "R *", name: "rivalsStars", type: "number" },
+  { title: "S Rank", name: "scoutRank", type: "number" },
+  { title: "S *", name: "scoutStars", type: "number" },
+  { title: "Early?", name: "earlyEnrollee", type: "boolean" }
 ];
 const d = new Date();
 const currentRecYear = d.getMonth() < 2 ? d.getFullYear() : d.getFullYear() + 1;
@@ -47,12 +134,16 @@ for (let i = currentYear + 2; i >= config.firstSeason; i--) {
   years.push(i);
 }
 const recYears: number[] = [];
-for (let i = currentRecYear + 2; i >= config.firstTrackedRecruitingSeason; i--) {
+for (
+  let i = currentRecYear + 2;
+  i >= config.firstTrackedRecruitingSeason;
+  i--
+) {
   recYears.push(i);
 }
 let conferences: any;
 
-Rest.get('conferences').then(c => {
+Rest.get("conferences").then(c => {
   conferences = c;
 });
 
@@ -60,22 +151,22 @@ interface IAdminViewProps {
   user: any;
 }
 
-export const AdminView: FC<IAdminViewProps> = (props) => {
+export const AdminView: FC<IAdminViewProps> = props => {
   if (!props.user) {
-    history.push('/');
+    history.push("/");
   }
   const [players, setPlayers] = useState<any>({});
   const [recruits, setRecruits] = useState<any[]>([]);
   const [games, setGames] = useState<any[]>([]);
-  const [playerSlideOut, setPlayerSlideOut] = useState('');
+  const [playerSlideOut, setPlayerSlideOut] = useState("");
   const [scheduleYear, setScheduleYear] = useState(currentYear);
   const [recYear, setRecYear] = useState(currentRecYear);
   const [opponentOptions, setOpponentOptions] = useState<any[]>([]);
   const [locationOptions, setLocationOptions] = useState<any[]>([]);
   const [gameTableHeaders, setGameTableHeaders] = useState<any[]>([]);
-  const [confirmAction, setConfirmAction] = useState('');
+  const [confirmAction, setConfirmAction] = useState("");
   const [confirmModal, setConfirmModal] = useState(false);
-  const [confirmText, setConfirmText] = useState('');
+  const [confirmText, setConfirmText] = useState("");
   const refreshCallback = useRef<Function>(() => {});
 
   useEffect(() => {
@@ -83,62 +174,61 @@ export const AdminView: FC<IAdminViewProps> = (props) => {
     getGames(currentYear);
     getRecruits(currentRecYear);
 
-
-    Promise.all([
-      Rest.get('locations'),
-      Rest.get('opponents')
-    ]).then(([locOptions, oppOptions]) => {
-      let gtHeaders: any[] = [
-        { name: 'game', type: 'text' },
-        { name: 'date', type: 'date' },
-        {
-          name: 'opponent',
-          type: 'autocomplete',
-          items: oppOptions.map(o => o.name),
-          render: (items) => {
-            return items.map(item => {
-              let classes = item.highlighted ? 'option highlighted' : 'option';
+    Promise.all([Rest.get("locations"), Rest.get("opponents")]).then(
+      ([locOptions, oppOptions]) => {
+        let gtHeaders: any[] = [
+          { name: "game", type: "text" },
+          { name: "date", type: "date" },
+          {
+            name: "opponent",
+            type: "autocomplete",
+            items: oppOptions.map(o => o.name),
+            render: item => {
+              let classes = item.highlighted ? "option highlighted" : "option";
               return (
-                <li key={item.val} className={classes} onClick={() => {}} data-item={item}>
-                  <div className={`team-logo logo-${item.val.replace(/\s+/g, '').replace(/&/g, '').replace(/\./g, '')}`}></div>
+                <div key={item.val} className={classes} data-item={item}>
+                  <div
+                    className={`team-logo logo-${item.val
+                      .replace(/\s+/g, "")
+                      .replace(/&/g, "")
+                      .replace(/\./g, "")}`}
+                  ></div>
                   {item.val}
-                </li>
+                </div>
               );
-            });
-          }
-        },
-        { name: 'teamScore', title: 'Team Score', type: 'number' },
-        { name: 'opScore', title: 'Opponent Score', type: 'number' },
-        {
-          name: 'location',
-          type: 'autocomplete',
-          items: locOptions,
-          render: (items) => {
-            return items.map(item => {
-              let classes = item.highlighted ? 'option highlighted' : 'option';
+            }
+          },
+          { name: "teamScore", title: "Team Score", type: "number" },
+          { name: "opScore", title: "Opponent Score", type: "number" },
+          {
+            name: "location",
+            type: "autocomplete",
+            items: locOptions,
+            render: item => {
+              let classes = item.highlighted ? "option highlighted" : "option";
               return (
-                <li key={item.val} className={classes} onClick={() => {}} data-item={item}>
+                <span className={classes} data-item={item}>
                   {item.val}
-                </li>
+                </span>
               );
-            });
+            }
           }
-        }
-      ];
+        ];
 
-      setOpponentOptions(oppOptions);
-      setLocationOptions(locOptions);
-      setGameTableHeaders(gtHeaders);
-    });
+        setOpponentOptions(oppOptions);
+        setLocationOptions(locOptions);
+        setGameTableHeaders(gtHeaders);
+      }
+    );
   }, []);
 
   const getPlayers = async () => {
-    let pls = LocalStorageService.get('players');
+    let pls = LocalStorageService.get("players");
     if (pls) {
       setPlayers(pls);
     }
 
-    const plsByPos = await Rest.get('playersByPos')
+    const plsByPos = await Rest.get("playersByPos");
     if (JSON.stringify(pls) !== JSON.stringify(plsByPos)) {
       setPlayers(plsByPos);
       if (refreshCallback.current) {
@@ -147,7 +237,7 @@ export const AdminView: FC<IAdminViewProps> = (props) => {
     }
   };
 
-  const getGames = async (year) => {
+  const getGames = async year => {
     const res = await Rest.get(`year/${year}`);
     setGames(res);
   };
@@ -157,35 +247,44 @@ export const AdminView: FC<IAdminViewProps> = (props) => {
     setRecruits(res);
   };
 
-  const showPlayerSlideOut = (player) => {
+  const showPlayerSlideOut = player => {
     setPlayerSlideOut(player);
   };
 
   const dismissPlayerSlideOut = () => {
-    setPlayerSlideOut('');
+    setPlayerSlideOut("");
   };
 
-  const savePlayer = async (player) => {
+  const savePlayer = async player => {
     await Rest.post(`player/${player._id}`, player);
     getPlayers();
     dismissPlayerSlideOut();
   };
 
-  const swapPlayers = async (player, replacedPlayer, insertFirst, insertLast) => {
+  const swapPlayers = async (
+    player,
+    replacedPlayer,
+    insertFirst,
+    insertLast
+  ) => {
     try {
-      await Rest.post('posChange', { player, replacedPlayer, insertFirst, insertLast });
+      await Rest.post("posChange", {
+        player,
+        replacedPlayer,
+        insertFirst,
+        insertLast
+      });
       getPlayers();
-    }
-    catch (e) {
+    } catch (e) {
       console.error(e);
-    };
+    }
   };
 
-  const registerRefreshCallback = (cb) => {
+  const registerRefreshCallback = cb => {
     refreshCallback.current = cb;
   };
 
-  const saveGameRow = async (game) => {
+  const saveGameRow = async game => {
     // We first have to correctly set the conference info, etc.
     let conf = conferences.find(c => c.members.indexOf(game.opponent) !== -1);
     if (conf) {
@@ -197,49 +296,47 @@ export const AdminView: FC<IAdminViewProps> = (props) => {
       game.confGame = conf.conference.indexOf(config.conference) !== -1;
     }
     try {
-      await Rest.post('games', game);
+      await Rest.post("games", game);
       return;
-    }
-    catch (e) {
+    } catch (e) {
       console.error(e);
     }
   };
 
   const saveRecRow = async (rec, i) => {
     try {
-      const recruit = await Rest.post('recruits', rec);
-      let recs = [ ...recruits ];
+      const recruit = await Rest.post("recruits", rec);
+      let recs = [...recruits];
       recs[i] = recruit;
       setRecruits(recs);
-    }
-    catch (e) {
+    } catch (e) {
       console.error(e);
     }
   };
 
-  const setSchedYear = (e) => {
+  const setSchedYear = e => {
     let schedYear = parseInt(e.target.value);
-    setSchedYear(schedYear)
+    setScheduleYear(schedYear);
     getGames(schedYear);
   };
 
-  const setRecruitsYear = (e) => {
+  const setRecruitsYear = e => {
     let recruitsYear = parseInt(e.target.value);
-    setRecYear(recruitsYear)
+    setRecYear(recruitsYear);
     getRecruits(recruitsYear);
   };
 
   const addRecruit = () => {
     let protoRecruit = {
-      fname: 'John',
-      lname: 'Doe',
-      pos: 'QB',
-      truePos: 'QB',
+      fname: "John",
+      lname: "Doe",
+      pos: "QB",
+      truePos: "QB",
       class: recYear,
       city: config.city.slice(0, -4),
       state: config.city.slice(-2),
       hs: config.city.slice(0, -4),
-      height: '6-2',
+      height: "6-2",
       weight: 200,
       rivalsRank: 25,
       scoutRank: 25,
@@ -247,13 +344,13 @@ export const AdminView: FC<IAdminViewProps> = (props) => {
       scoutStars: 4,
       earlyEnrollee: false
     };
-    let recs = [ ...recruits ];
+    let recs = [...recruits];
     recs.push(protoRecruit);
     setRecruits(recs);
   };
 
   const addGame = () => {
-    let allGames = [ ...games ];
+    let allGames = [...games];
     let lastGame = allGames[allGames.length - 1];
     let newDate;
 
@@ -263,8 +360,7 @@ export const AdminView: FC<IAdminViewProps> = (props) => {
       while (newDate.getDay() !== 6) {
         newDate.setDate(newDate.getDate() + 1);
       }
-    }
-    else {
+    } else {
       // We must be adding the first game of the season!
       // Let's make a reasonable guess here, starting at the first
       // Saturday on or after August 30th
@@ -290,9 +386,9 @@ export const AdminView: FC<IAdminViewProps> = (props) => {
       season: scheduleYear,
       opponent: opponentOptions[0].name,
       game: lastGame ? lastGame.game + 1 : 1,
-      result: 'T',
+      result: "T",
       date: `${newDate.getFullYear()}-${month}-${day}`,
-      homeAwayNeutral: 'H',
+      homeAwayNeutral: "H",
       location: config.city,
       teamScore: 0,
       opScore: 0,
@@ -300,18 +396,17 @@ export const AdminView: FC<IAdminViewProps> = (props) => {
       gameId: lastGame ? lastGame.gameId + 1 : null
     };
 
-    delete protoGame['_id'];
-    delete protoGame['__v'];
+    delete protoGame["_id"];
+    delete protoGame["__v"];
     allGames.push(protoGame);
     setGames(allGames);
   };
 
   const deleteGameRow = async (i, deletedGame) => {
     try {
-      await Rest.del(`games/${deletedGame._id}`, deletedGame)
+      await Rest.del(`games/${deletedGame._id}`, deletedGame);
       getGames(scheduleYear);
-    }
-    catch (e) {
+    } catch (e) {
       console.error(e);
     }
   };
@@ -320,10 +415,9 @@ export const AdminView: FC<IAdminViewProps> = (props) => {
     try {
       await Rest.del(`recruit/${deletedRecruit._id}`, deletedRecruit);
       getRecruits(currentRecYear);
-    }
-    catch (e) {
+    } catch (e) {
       console.error(e);
-    };
+    }
   };
 
   const maybePerformAction = (action, confText) => {
@@ -333,50 +427,50 @@ export const AdminView: FC<IAdminViewProps> = (props) => {
   };
 
   const dismissConfirmModal = () => {
-    setConfirmAction('');
-    setConfirmText('');
+    setConfirmAction("");
+    setConfirmText("");
     setConfirmModal(false);
   };
 
   const doConfirmAction = () => {
     switch (confirmAction) {
-      case 'fixStringNumbers':
+      case "fixStringNumbers":
         fixStringNumbers();
         return;
-      case 'advancePlayers':
+      case "advancePlayers":
         advancePlayers();
         return;
-      case 'enrollEarly':
+      case "enrollEarly":
         enrollEarly();
         return;
-      case 'enrollAll':
+      case "enrollAll":
         enrollAll();
         return;
     }
   };
 
   const advancePlayers = async () => {
-    await Rest.post('advancePlayers')
+    await Rest.post("advancePlayers");
     getPlayers();
     dismissConfirmModal();
   };
 
   const enrollEarly = async () => {
-    await Rest.post('recruits/enroll?early=true');
+    await Rest.post("recruits/enroll?early=true");
     getPlayers();
     getRecruits();
     dismissConfirmModal();
   };
 
   const enrollAll = async () => {
-    await Rest.post('recruits/enroll');
+    await Rest.post("recruits/enroll");
     getPlayers();
     getRecruits();
     dismissConfirmModal();
   };
 
   const fixStringNumbers = async () => {
-    await Rest.post('fixStringNumbers');
+    await Rest.post("fixStringNumbers");
     getPlayers();
     dismissConfirmModal();
   };
@@ -385,7 +479,13 @@ export const AdminView: FC<IAdminViewProps> = (props) => {
   let confModal;
 
   if (players && playerSlideOut) {
-    plSlideOut = <EditablePlayerSlideOut player={playerSlideOut} dismiss={dismissPlayerSlideOut} save={(player) => savePlayer(player)} />;
+    plSlideOut = (
+      <EditablePlayerSlideOut
+        player={playerSlideOut}
+        dismiss={dismissPlayerSlideOut}
+        save={player => savePlayer(player)}
+      />
+    );
   }
 
   if (confirmModal && confirmAction) {
@@ -395,12 +495,18 @@ export const AdminView: FC<IAdminViewProps> = (props) => {
         <div className="modal scale-in confirm-modal">
           <div className="modal-header">
             <h2>Are you sure you want to {confirmText}?</h2>
-            <button className="dismiss-btn" onClick={dismissConfirmModal}>&times;</button>
+            <button className="dismiss-btn" onClick={dismissConfirmModal}>
+              &times;
+            </button>
           </div>
           <div className="modal-body flex">
             <div className="btn-container">
-              <button className="btn primary" onClick={doConfirmAction}>Yes</button>
-              <button className="btn" onClick={dismissConfirmModal}>No</button>
+              <button className="btn primary" onClick={doConfirmAction}>
+                Yes
+              </button>
+              <button className="btn" onClick={dismissConfirmModal}>
+                No
+              </button>
             </div>
           </div>
         </div>
@@ -418,13 +524,14 @@ export const AdminView: FC<IAdminViewProps> = (props) => {
         transitionLeave={true}
         transitionEnter={true}
         transitionEnterTimeout={0}
-        transitionLeaveTimeout={0}>
+        transitionLeaveTimeout={0}
+      >
         {plSlideOut || []}
       </CSSTransitionGroup>
 
       <Expandable title="Edit Depth Chart" defaultCollapsed>
         <DepthChart
-          selectedCallback={(player) => showPlayerSlideOut(player)}
+          selectedCallback={player => showPlayerSlideOut(player)}
           players={players}
           swapPlayers={swapPlayers}
           editable
@@ -442,13 +549,19 @@ export const AdminView: FC<IAdminViewProps> = (props) => {
 
       <hr />
 
-      <Expandable className="flex-center" title="Edit Schedule" defaultCollapsed>
+      <Expandable
+        className="flex-center"
+        title="Edit Schedule"
+        defaultCollapsed
+      >
         <select onChange={setSchedYear}>
-          {
-            years.map(y => {
-              return <option key={y} value={y} selected={y === scheduleYear}>{y}</option>
-            })
-          }
+          {years.map(y => {
+            return (
+              <option key={y} value={y} selected={y === scheduleYear}>
+                {y}
+              </option>
+            );
+          })}
         </select>
         <EditableTable
           className="capped-size-table"
@@ -459,18 +572,26 @@ export const AdminView: FC<IAdminViewProps> = (props) => {
           rowDeleteCallback={deleteGameRow}
           deleteButton
         />
-        <button className="btn primary" onClick={addGame}>Add Game</button>
+        <button className="btn primary" onClick={addGame}>
+          Add Game
+        </button>
       </Expandable>
 
       <hr />
 
-      <Expandable className="flex-center" title="Edit Recruits" defaultCollapsed>
+      <Expandable
+        className="flex-center"
+        title="Edit Recruits"
+        defaultCollapsed
+      >
         <select onChange={setRecruitsYear}>
-          {
-            recYears.map(y => {
-              return <option key={y} value={y} selected={y === recYear}>{y}</option>
-            })
-          }
+          {recYears.map(y => {
+            return (
+              <option key={y} value={y} selected={y === recYear}>
+                {y}
+              </option>
+            );
+          })}
         </select>
         <EditableTable
           headers={recTableHeaders}
@@ -480,20 +601,48 @@ export const AdminView: FC<IAdminViewProps> = (props) => {
           rowDeleteCallback={deleteRecRow}
           deleteButton
         />
-        <button className="btn primary" onClick={addRecruit}>Add Recruit</button>
+        <button className="btn primary" onClick={addRecruit}>
+          Add Recruit
+        </button>
       </Expandable>
 
       <hr />
 
       <Expandable title="One-Click Actions" defaultCollapsed>
         <h2>Fix string numbers</h2>
-        <button className="btn primary" onClick={() => maybePerformAction('fixStringNumbers', 'Fix String Numbers')}>Fix</button>
+        <button
+          className="btn primary"
+          onClick={() =>
+            maybePerformAction("fixStringNumbers", "Fix String Numbers")
+          }
+        >
+          Fix
+        </button>
         <h2>Advance Players</h2>
-        <button className="btn primary" onClick={() => maybePerformAction('advancePlayers', 'Advance Players')}>Advance</button>
+        <button
+          className="btn primary"
+          onClick={() =>
+            maybePerformAction("advancePlayers", "Advance Players")
+          }
+        >
+          Advance
+        </button>
         <h2>Enroll Early Recruits</h2>
-        <button className="btn primary" onClick={() => maybePerformAction('enrollEarly', 'Enroll all early recruits')}>Enroll</button>
+        <button
+          className="btn primary"
+          onClick={() =>
+            maybePerformAction("enrollEarly", "Enroll all early recruits")
+          }
+        >
+          Enroll
+        </button>
         <h2>Enroll All Recruits</h2>
-        <button className="btn primary" onClick={() => maybePerformAction('enrollAll', 'Enroll all recruits')}>Enroll</button>
+        <button
+          className="btn primary"
+          onClick={() => maybePerformAction("enrollAll", "Enroll all recruits")}
+        >
+          Enroll
+        </button>
       </Expandable>
 
       <CSSTransitionGroup
@@ -503,9 +652,10 @@ export const AdminView: FC<IAdminViewProps> = (props) => {
         transitionLeave={true}
         transitionEnter={true}
         transitionEnterTimeout={150}
-        transitionLeaveTimeout={150}>
+        transitionLeaveTimeout={150}
+      >
         {confModal || []}
       </CSSTransitionGroup>
     </div>
   );
-}
+};
