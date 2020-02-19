@@ -1,13 +1,15 @@
-import React, { FC, useState, useEffect } from 'react';
-import Rest from '../lib/rest-service';
+import React, { FC, useState, useEffect } from "react";
+import Rest from "../lib/rest-service";
 
 interface IIPTProps {
   registerForRefresh: (fn: Function) => void;
   playerReactivated: () => void;
 }
 
-export const InactivePlayersTable: FC<IIPTProps> = ({ playerReactivated, registerForRefresh }) => {
-
+export const InactivePlayersTable: FC<IIPTProps> = ({
+  playerReactivated,
+  registerForRefresh
+}) => {
   const [players, setPlayers] = useState<any[]>([]);
   useEffect(() => {
     if (!players) {
@@ -22,17 +24,16 @@ export const InactivePlayersTable: FC<IIPTProps> = ({ playerReactivated, registe
   }, []);
 
   const getPlayers = async () => {
-    setPlayers(await Rest.get('players/inactive'));
+    setPlayers(await Rest.get("players/inactive"));
   };
 
-  const reactivate = async (player) => {
+  const reactivate = async player => {
     player.active = true;
     try {
       await Rest.post(`player/${player._id}`, player);
       playerReactivated();
       getPlayers();
-    }
-    catch (e) {
+    } catch (e) {
       console.error(e);
     }
   };
@@ -47,17 +48,19 @@ export const InactivePlayersTable: FC<IIPTProps> = ({ playerReactivated, registe
         </tr>
       </thead>
       <tbody>
-        {
-          players.map(pl => (
-            <tr>
-              <td>{pl.fname} {pl.lname}</td>
-              <td>{pl.pos}</td>
-              <td>
-                <button className="btn plus-btn" onClick={() => reactivate(pl)}>+</button>
-              </td>
-            </tr>
-          ))
-        }
+        {players.map(pl => (
+          <tr key={pl.fname + pl.lname + pl.pos}>
+            <td>
+              {pl.fname} {pl.lname}
+            </td>
+            <td>{pl.pos}</td>
+            <td>
+              <button className="btn plus-btn" onClick={() => reactivate(pl)}>
+                +
+              </button>
+            </td>
+          </tr>
+        ))}
       </tbody>
     </table>
   );

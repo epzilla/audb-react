@@ -1,17 +1,25 @@
-import React, { FC } from 'react';
-import { gameIsInFuture } from '../lib/helpers';
+import React, { FC } from "react";
+import { gameIsInFuture } from "../lib/helpers";
+import { TeamLogo } from "./TeamLogo";
 
 interface IStatsTableProps {
-  games,
-  user,
-  toggleUserAttend,
-  currentYear,
-  showRecord,
-  config
+  games;
+  user;
+  toggleUserAttend;
+  currentYear;
+  showRecord;
+  config;
 }
 
-export const StatsTable: FC<IStatsTableProps> = (props) => {
-  const { games, user, toggleUserAttend, currentYear, showRecord, config } = props;
+export const StatsTable: FC<IStatsTableProps> = props => {
+  const {
+    games,
+    user,
+    toggleUserAttend,
+    currentYear,
+    showRecord,
+    config
+  } = props;
   let wins = 0;
   let losses = 0;
   let ties = 0;
@@ -24,25 +32,25 @@ export const StatsTable: FC<IStatsTableProps> = (props) => {
     let resText;
     let rowClass;
     let attendCol;
-    let dateParts = game.date.split('-');
+    let dateParts = game.date.split("-");
 
-    if (game.result === 'W') {
-      resText = 'W';
-      rowClass = 'win';
+    if (game.result === "W") {
+      resText = "W";
+      rowClass = "win";
       wins++;
       if (game.confGame) {
         confW++;
       }
-    } else if (game.result === 'L') {
-      resText = 'L';
-      rowClass = 'loss';
+    } else if (game.result === "L") {
+      resText = "L";
+      rowClass = "loss";
       losses++;
       if (game.confGame) {
         confL++;
       }
     } else {
-      rowClass = 'tie';
-      resText = currentYear === game.season ? '--' : 'T';
+      rowClass = "tie";
+      resText = currentYear === game.season ? "--" : "T";
       if (game.season < 1996) {
         ties++;
         if (game.confGame) {
@@ -51,9 +59,9 @@ export const StatsTable: FC<IStatsTableProps> = (props) => {
       }
     }
 
-    record = `${wins}–${losses}${ties > 0 ? '–' + ties : ''}`;
+    record = `${wins}–${losses}${ties > 0 ? "–" + ties : ""}`;
     if (confW || confL || confT) {
-      record += ` (${confW}–${confL}${ties > 0 ? '–' + confT : ''})`;
+      record += ` (${confW}–${confL}${ties > 0 ? "–" + confT : ""})`;
     }
 
     if (user) {
@@ -61,13 +69,17 @@ export const StatsTable: FC<IStatsTableProps> = (props) => {
       if (!gameIsInFuture(game)) {
         attendCol = (
           <td>
-            <button className={didAttend ? 'btn primary attended' : 'btn not-attended'} onClick={() => toggleUserAttend(game._id)}>
-              {didAttend ? '✔' : '—'}
+            <button
+              className={
+                didAttend ? "btn primary attended" : "btn not-attended"
+              }
+              onClick={() => toggleUserAttend(game._id)}
+            >
+              {didAttend ? "✔" : "—"}
             </button>
           </td>
         );
-      }
-      else {
+      } else {
         attendCol = <td></td>;
       }
     }
@@ -75,31 +87,33 @@ export const StatsTable: FC<IStatsTableProps> = (props) => {
     return (
       <tr key={game._id} tabIndex={i + 11} className={rowClass}>
         <td>
-          <span className="larger">{ `${dateParts[1]}/${dateParts[2]}/${dateParts[0]}` }</span>
+          <span className="larger">{`${dateParts[1]}/${dateParts[2]}/${dateParts[0]}`}</span>
           <span className="smaller">{dateParts[0]}</span>
         </td>
-        <td className="center">{ game.result }</td>
+        <td className="center">{game.result}</td>
         <td className="logo-td center">
-              <div className={`team-logo logo-${ game.opponent.replace(/\s+/g, '').replace(/&/g, '').replace(/\./g, '') }`}></div>
-            </td>
+          <TeamLogo team={game.opponent} />
+        </td>
         <td>
           <span className="larger">{game.opponent}</span>
           <span className="smaller">{game.opponentShortName}</span>
           <span className="smallest">{game.opponentAbbrev}</span>
         </td>
-        <td>{ `${game.teamScore}–${game.opScore}` }</td>
+        <td>{`${game.teamScore}–${game.opScore}`}</td>
         <td className="center">
           <span className="larger">{game.location}</span>
           <span className="smaller">{game.homeAwayNeutral}</span>
         </td>
-        { attendCol }
+        {attendCol}
       </tr>
-    )
+    );
   });
 
   return (
     <div className="full-width">
-      { showRecord ? <h2 className="record align-center">Record: { record }</h2> : null }
+      {showRecord ? (
+        <h2 className="record align-center">Record: {record}</h2>
+      ) : null}
       <table className="stats-table center capped-size-table">
         <thead>
           <tr>
@@ -118,7 +132,7 @@ export const StatsTable: FC<IStatsTableProps> = (props) => {
             {user ? <th>Attended?</th> : null}
           </tr>
         </thead>
-        <tbody>{ rows }</tbody>
+        <tbody>{rows}</tbody>
       </table>
     </div>
   );

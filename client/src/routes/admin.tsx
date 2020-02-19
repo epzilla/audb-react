@@ -554,10 +554,10 @@ export const AdminView: FC<IAdminViewProps> = props => {
         title="Edit Schedule"
         defaultCollapsed
       >
-        <select onChange={setSchedYear}>
+        <select onChange={setSchedYear} defaultValue={scheduleYear}>
           {years.map(y => {
             return (
-              <option key={y} value={y} selected={y === scheduleYear}>
+              <option key={y} value={y}>
                 {y}
               </option>
             );
@@ -584,10 +584,10 @@ export const AdminView: FC<IAdminViewProps> = props => {
         title="Edit Recruits"
         defaultCollapsed
       >
-        <select onChange={setRecruitsYear}>
+        <select onChange={setRecruitsYear} defaultValue={recYear}>
           {recYears.map(y => {
             return (
-              <option key={y} value={y} selected={y === recYear}>
+              <option key={y} value={y}>
                 {y}
               </option>
             );

@@ -98,58 +98,6 @@ export const Autocomplete: FC<IAutoCompleteProps> = ({
     let val = e.target.value;
     debouncedChange(val);
   };
-  // const onKeyUp = debounce((e: React.KeyboardEvent) => {
-  //   if (e.key === 'ArrowDown') {
-  //     let updatedMatches = [ ...matches ];
-  //     let i = updatedMatches.findIndex(m => m.highlighted);
-  //     if (i !== -1) {
-  //       updatedMatches[i].highlighted = false;
-  //       if (updatedMatches.length > i + 1) {
-  //         updatedMatches[i + 1].highlighted = true;
-  //       }
-  //       else if (updatedMatches.length > 1) {
-  //         updatedMatches[0].highlighted = true;
-  //       }
-  //       e.preventDefault();
-  //       setMatches(updatedMatches);
-  //     }
-  //   }
-  //   else if (e.key === 'ArrowUp') {
-  //     let updatedMatches = [...matches];
-  //     let i = updatedMatches.findIndex(m => m.highlighted);
-  //     if (i !== -1) {
-  //       updatedMatches[i].highlighted = false;
-  //       if (updatedMatches.length > 1 && i === 0) {
-  //         updatedMatches[updatedMatches.length - 1].highlighted = true;
-  //       }
-  //       else if (updatedMatches.length > 1) {
-  //         updatedMatches[i - 1].highlighted = true;
-  //       }
-  //       e.preventDefault();
-  //       setMatches(updatedMatches);
-  //     }
-  //   }
-  //   else if (e.key === 'Enter' || e.key === 'Tab') {
-  //     let h = matches.find(m => m.highlighted);
-  //     if (h) {
-  //       onSelect(h);
-  //     }
-  //   }
-  //   else if (e.key === 'Escape') {
-  //     setMatches([]);
-  //   }
-  //   else {
-  //     setCurrentValue((e.target as HTMLInputElement).value);
-  //     let m = currentValue.length > 1 ? options.filter(o => o.toLowerCase().indexOf(currentValue.toLowerCase()) !== -1) : [];
-  //     let autoMatches = m.map((m, i) => {
-  //       return {
-  //         val: m,
-  //         highlighted: i === 0
-  //       };
-  //     });
-  //     setMatches(autoMatches);
-  //   }
-  // }, 10);
 
   const onFocus = e => {
     e.target.select();
@@ -176,7 +124,9 @@ export const Autocomplete: FC<IAutoCompleteProps> = ({
       {matches && matches.length > 0 ? (
         <ul className="options-dropdown">
           {matches.map(m => (
-            <li onClick={() => onSelect(m)}>{renderItem(m)}</li>
+            <li key={m.val} onClick={() => onSelect(m)}>
+              {renderItem(m)}
+            </li>
           ))}
         </ul>
       ) : null}

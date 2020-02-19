@@ -89,14 +89,14 @@ export const EditableTable: FC<IEditableTableProps> = props => {
 
   let headerRowCells = headers.map(header => {
     return (
-      <th key={header.title} className="title-case">
-        {header.title ? header.title : header.name}
+      <th key={header.title || header.name} className="title-case">
+        {header.title || header.name}
       </th>
     );
   });
 
   if (deleteButton) {
-    headerRowCells.push(<th></th>);
+    headerRowCells.push(<th key={"del-btn=heaeder"}></th>);
   }
 
   let rows = data.map((d, i) => {
@@ -123,7 +123,7 @@ export const EditableTable: FC<IEditableTableProps> = props => {
 
       if (header.type === "boolean") {
         return (
-          <td className="flex-center">
+          <td key={header.title + "td" + i} className="flex-center">
             <Toggle
               id={`${header.name}-${i}`}
               toggled={e => toggled(e, i)}
@@ -134,7 +134,7 @@ export const EditableTable: FC<IEditableTableProps> = props => {
         );
       } else if (header.type === "autocomplete") {
         return (
-          <td>
+          <td key={header.title + "td" + i}>
             <Autocomplete
               value={d[header.name]}
               options={header.items}
@@ -146,7 +146,7 @@ export const EditableTable: FC<IEditableTableProps> = props => {
       }
 
       return (
-        <td>
+        <td key={header.title + "td" + i}>
           <input
             onFocus={focus}
             value={d[header.name]}
@@ -159,14 +159,14 @@ export const EditableTable: FC<IEditableTableProps> = props => {
 
     if (deleteButton) {
       cells.push(
-        <td>
+        <td key={"del-btn-" + i}>
           <button className="delete-btn" onClick={() => deleteRow(i)}>
             &times;
           </button>
         </td>
       );
     }
-    return <tr>{cells}</tr>;
+    return <tr key={i}>{cells}</tr>;
   });
 
   return (
